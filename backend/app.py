@@ -1,4 +1,7 @@
 import os
+import base64
+from io import BytesIO
+from PIL import Image as PILImage
 from flask import Flask, jsonify, request
 from google.cloud import aiplatform
 import vertexai
@@ -13,9 +16,6 @@ app = Flask(__name__)
 # Set up the Google Application Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./serviceAccountKey.json"
 
-# Path to your media file (image)
-media_file_path = "IMG_3218.jpg"  # Update this with your image file path
-
 # Initialize the AI Platform with your project ID and region
 project_id = "storysnaps"
 region = "us-central1"
@@ -29,7 +29,7 @@ vertexai.init(project=project_id, location=region)
 previous_stories = ""
 end_story = False
 
-def generate_story_from_media(media_file, previous_stories, end_story):
+def generate_story_from_media(image_data, previous_stories, end_story):
     """Function to send media data (image) to a Vertex AI model and get predictions."""
 
     # Initialize the model
@@ -65,7 +65,12 @@ def generate_story_from_media(media_file, previous_stories, end_story):
     # Send request to the model
     try:
         # Load the image
-        image = Image.load_from_file(media_file)
+        image_stream = BytesIO(image_data)
+        pil_image = PILImage.open(image_stream)
+        image_stream.seek(0)
+
+        # Convert to the format Vertex AI expects
+        image = Image.load_from_pil(pil_image)
         response = model.generate_content(
             [prompt, image],
             generation_config=generation_config
@@ -87,19 +92,20 @@ def generate():
     data = request.get_json()
     previous_stories = data.get("previous_stories")
     end_story = data.get("end_story")
+
     # Load image
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file provided.'}), 400
-
-    image_file = request.files['image']
+    image_base64 = data.get('image')
+    if not image_base64:
+        return jsonify({'error': 'No image data provided.'}), 400
     
-    # Save the uploaded image temporarily
-    image_file_path = os.path.join('uploads', image_file.filename)
-    image_file.save(image_file_path)
+    # Decode the base64-encoded image
+    try:
+        image_data = base64.b64decode(image_base64)
+    except Exception as e:
+        return jsonify({'error': f'Invalid image data. {str(e)}'}), 400
 
-    story = generate_story_from_media(image_file_path, previous_stories, end_story)
+    story = generate_story_from_media(image_data, previous_stories, end_story)
 
-    os.remove(image_file_path)
     response_data = {
         'story': story 
     }

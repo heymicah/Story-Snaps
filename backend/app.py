@@ -32,9 +32,6 @@ end_story = False
 def generate_story_from_media(media_file, previous_stories, end_story):
     """Function to send media data (image) to a Vertex AI model and get predictions."""
 
-    # Load the image using vertexai.Image
-    image = Image.load_from_file(media_file)
-
     # Initialize the model
     model = GenerativeModel(MODEL_ID)
 
@@ -67,6 +64,8 @@ def generate_story_from_media(media_file, previous_stories, end_story):
 
     # Send request to the model
     try:
+        # Load the image
+        image = Image.load_from_file(media_file)
         response = model.generate_content(
             [prompt, image],
             generation_config=generation_config
@@ -84,8 +83,23 @@ def home():
 
 @app.route('/generate')
 def generate():
-    # data = request.get_json()
-    story = generate_story_from_media(media_file_path, previous_stories, end_story)
+    # Load data
+    data = request.get_json()
+    previous_stories = data.get("previous_stories")
+    end_story = data.get("end_story")
+    # Load image
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file provided.'}), 400
+
+    image_file = request.files['image']
+    
+    # Save the uploaded image temporarily
+    image_file_path = os.path.join('uploads', image_file.filename)
+    image_file.save(image_file_path)
+
+    story = generate_story_from_media(image_file_path, previous_stories, end_story)
+
+    os.remove(image_file_path)
     response_data = {
         'story': story 
     }

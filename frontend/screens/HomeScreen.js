@@ -18,18 +18,11 @@ const HomeScreen = ({ navigation }) => {
     Roboto_400Regular,
     Roboto_700Bold,
   });
+
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          fontSize: 40,
-          top: "7.5%",
-          fontFamily: "Roboto_700Bold",
-          color: "#080C0C",
-        }}
-      >
-        Story Snaps
-      </Text>
+      {/* Move the "Story Snaps" text above the button */}
+      <Text style={styles.headerText}>Story Snaps</Text>
 
       {/* Center the Button and move it higher on the screen */}
       <TouchableOpacity
@@ -49,9 +42,16 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Center the content vertically
     backgroundColor: "#F0E6EF",
   },
+  headerText: {
+    fontSize: 40,
+    fontFamily: "Roboto_700Bold",
+    color: "#080C0C",
+    position: "absolute",
+    top: "45%", // Move the text higher than the button
+  },
   addBtn: {
     position: "absolute",
-    top: "60%", // Move the button higher up (adjust percentage as needed)
+    top: "60%", // Adjust this value to position the button lower than the text
     alignSelf: "center", // Center horizontally
     justifyContent: "center", // Center the text inside the button
     alignItems: "center", // Center the text inside the button

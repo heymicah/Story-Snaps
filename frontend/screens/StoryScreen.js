@@ -69,7 +69,7 @@ const StoryScreen = ({ navigation }) => {
       >
         <Text style={styles.addBtnText}>+</Text>
       </TouchableOpacity>
-      <PagerView style={styles.scrollView} initialPage={0}>
+      <PagerView style={styles.pagerView} initialPage={0}>
         <View style={styles.page} key="1">
           <View style={styles.imageContainer}>
             <Image
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_700Bold",
     color: "#080C0C",
     textAlign: "center",
-    marginTop: 50,
+    marginTop: "12%",
   },
   titleInput: {
     fontSize: 30,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   editIconContainer: {
     marginLeft: 10,
     padding: 5,
-    marginTop: 50,
+    marginTop: "12%",
   },
   editIcon: {
     width: 30,
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     zIndex: 1,
-    opacity: 0.75,
+    opacity: 0.8,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#080C0C",
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     lineHeight: 56,
   },
-  scrollView: {
+  pagerView: {
     flex: 1,
   },
   page: {
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
+    backgroundColor: "#F0E6EF",
   },
   imageContainer: {
     width: "100%",

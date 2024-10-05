@@ -86,7 +86,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 def home():
     return 'Hello, World!'
 
-@app.route('/generate')
+@app.route('/generate', methods=['POST'])
 def generate():
     # Load data
     data = request.get_json()

@@ -1,4 +1,5 @@
 import os
+from flask import Flask, jsonify, request
 from google.cloud import aiplatform
 import vertexai
 from vertexai.generative_models import (
@@ -6,6 +7,8 @@ from vertexai.generative_models import (
     GenerativeModel,
     Image
 )
+
+app = Flask(__name__)
 
 # Set up the Google Application Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./serviceAccountKey.json"
@@ -23,7 +26,10 @@ MODEL_ID = "gemini-1.0-pro-vision"  # Changed to vision model
 # Initialize Vertex AI
 vertexai.init(project=project_id, location=region)
 
-def generate_story_from_media(media_file):
+previous_stories = ""
+end_story = False
+
+def generate_story_from_media(media_file, previous_stories, end_story):
     """Function to send media data (image) to a Vertex AI model and get predictions."""
 
     # Load the image using vertexai.Image
@@ -42,8 +48,22 @@ def generate_story_from_media(media_file):
     )
 
     # Create the prompt
-    prompt = """Look at this image and create a short story based on what you see. 
-    Be descriptive and creative."""
+    if(end_story):
+        prompt = f"""Look at this image and create a short story based on what you see. 
+        Be descriptive and creative.
+        The story should be a continuation of the following story but do not end the story
+        and leave room for expansion.
+
+        {previous_stories}
+        """
+    else:
+        prompt = f"""Look at this image and create a short story based on what you see. 
+        Be descriptive and creative.
+        The story should be a continuation of the following story and you should have an
+        ending. If there is no following story, create a brand new story.
+
+        {previous_stories}
+        """
 
     # Send request to the model
     try:
@@ -58,6 +78,18 @@ def generate_story_from_media(media_file):
         print(f"Error during content generation: {str(e)}")
         return None
 
-# Call the function with media file path
-if __name__ == "__main__":
-    generate_story_from_media(media_file_path)
+@app.route('/')
+def home():
+    return 'Hello, World!'
+
+@app.route('/generate')
+def generate():
+    # data = request.get_json()
+    story = generate_story_from_media(media_file_path, previous_stories, end_story)
+    response_data = {
+        'story': story 
+    }
+    return jsonify(response_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -7,7 +7,6 @@ import {
   Platform,
   Image,
   TextInput,
-  useWindowDimensions,
   ScrollView,
 } from "react-native";
 import {
@@ -90,6 +89,15 @@ const StoryScreen = ({ route, navigation }) => {
       >
         <Text style={styles.addBtnText}>+</Text>
       </TouchableOpacity>
+
+      {/* Back to Home Button */}
+      <TouchableOpacity
+        style={styles.backBtn}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Text style={styles.backBtnText}>Return Home</Text>
+      </TouchableOpacity>
+
       {isNewStory ? (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.pageText}>
@@ -175,6 +183,33 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     includeFontPadding: false,
     lineHeight: 56,
+  },
+  backBtn: {
+    position: "absolute",
+    bottom: 35, // Adjust this value if needed
+    left: 30,
+    backgroundColor: "#3FA7D6",
+    borderRadius: 10,
+    padding: 10,
+    zIndex: 1,
+    opacity: 0.8,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#080C0C",
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    ...Platform.select({
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  backBtnText: {
+    fontSize: 16,
+    color: "#080C0C",
+    fontFamily: "Roboto_700Bold",
+    textAlign: "center",
   },
   pagerView: {
     flex: 1,

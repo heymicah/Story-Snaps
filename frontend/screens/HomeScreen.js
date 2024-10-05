@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_700Bold",
     color: "#080C0C",
     position: "absolute",
-    top: "25%", // Move the text higher than the button
+    top: "15%", // Move the text higher than the button
   },
   addBtn: {
     position: "absolute",

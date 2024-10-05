@@ -12,9 +12,10 @@ import {
 } from "react-native";
 import {
   useFonts,
-  ComicNeue_400Regular,
-  ComicNeue_700Bold,
-} from '@expo-google-fonts/comic-neue';
+  Baloo2_400Regular,
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
+} from '@expo-google-fonts/baloo-2';
 
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -22,8 +23,9 @@ const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
-    ComicNeue_400Regular,
-    ComicNeue_700Bold,
+    CBaloo2_400Regular,
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
   });
 
   const renderStoryPreview = (story) => {
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
   },
   storyTitle: {
     fontSize: 25,
-    fontFamily: "ComicNeue_400Regular",
+    fontFamily: "Baloo2_400Regular",
     color: "#080C0C",
   },
   addBtn: {

@@ -69,7 +69,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
         pil_image = PILImage.open(image_stream)
         image_stream.seek(0)
 
-        # Convert to the format Vertex AI expects
+        # Formatting the image to load
         image = Image.load_from_pil(pil_image)
         response = model.generate_content(
             [prompt, image],

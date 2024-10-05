@@ -23,7 +23,7 @@ const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
-    CBaloo2_400Regular,
+    Baloo2_400Regular,
     Baloo2_600SemiBold,
     Baloo2_700Bold,
   });

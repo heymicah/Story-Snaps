@@ -47,18 +47,20 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 
     # Create the prompt
     if(not end_story):
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story but do not end the story
-        and leave room for expansion.
+        prompt = f"""Look at this image and create a short story for kids based on what is in the image.
+        Try not to deviate too much from what is in the image. 
+        Be descriptive and creative. Do not provide an ending to the story, instead and leave room for the story to continue to develop.
+        Make sure that the story can continue in several different ways, similar to a choose your adventure book but in third-person.
+        Additionally, make sure that the story is kid-friendly and doesn't use any complex vocabularly.
+        Lastly, try to limit your response to roughly one paragraph.
         
         {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
         """
     else:
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story and you should have an
-        ending. 
+        prompt = f"""Look at this image and create a short story for kids based on what is in the image.
+        Try not to deviate too much from what is in the image. 
+        Be descriptive and creative. Additionally, make sure that the story is kid-friendly and doesn't use any complex vocabularly.
+        Lastly, try to limit your response to roughly one paragraph. You should provide a solid, satisfying ending to the story.
 
         {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
         """

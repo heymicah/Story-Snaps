@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
+import { getAllStories } from "../api/StorageApi";
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import {
 } from "@expo-google-fonts/dev";
 
 const { width: screenWidth } = Dimensions.get("window");
+const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -23,79 +25,24 @@ const HomeScreen = ({ navigation }) => {
     Roboto_700Bold,
   });
 
-  
-// Whimsical text for no stories
-const whimsicalText = "Once upon a time in a land of dreams...";
-  
-// State for typing effect
-const [displayedText, setDisplayedText] = useState("");
-const [cursorVisible, setCursorVisible] = useState(true);
-const typingSpeed = 100; // Typing speed in milliseconds
-const deletionSpeed = 50; // Deletion speed in milliseconds
-
-useEffect(() => {
-  let index = 0;
-
-  // Typing effect
-  const typingInterval = setInterval(() => {
-    if (index < whimsicalText.length) {
-      setDisplayedText((prev) => prev + whimsicalText[index]);
-      index++;
-    } else {
-      clearInterval(typingInterval); // Stop typing when done
-    }
-  }, typingSpeed);
-
-  // Blinking cursor effect
-  const cursorInterval = setInterval(() => {
-    setCursorVisible((prev) => !prev);
-  }, 500); // Change cursor visibility every 500ms
-
-  // Cleanup intervals on unmount
-  return () => {
-    clearInterval(typingInterval);
-    clearInterval(cursorInterval);
+  const renderStoryPreview = (story) => {
+    return (
+      <TouchableOpacity
+        key={story.id}
+        style={styles.storyItem}
+        onPress={() => navigation.navigate("Story", { storyObj: story })}
+      >
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../assets/placeholder.png")} // adjust to reference the image in the story object instead of placeholder
+            defaultSource={require("../assets/placeholder.png")}
+            style={styles.image}
+          />
+        </View>
+        <Text style={styles.storyTitle}>{story.title}</Text>
+      </TouchableOpacity>
+    );
   };
-}, []); // Run only on mount
-
-// Deleting effect after 10 seconds
-useEffect(() => {
-  const deletionTimeout = setTimeout(() => {
-    let index = displayedText.length;
-
-    const deletionInterval = setInterval(() => {
-      if (index > 0) {
-        setDisplayedText((prev) => prev.slice(0, -1));
-        index--;
-      } else {
-        clearInterval(deletionInterval);
-        // Restart the typing effect
-        setTimeout(() => {
-          startTyping();
-        }, 500); // Delay before restarting the typing
-      }
-    }, deletionSpeed);
-  }, 10000); // Start deleting after 10 seconds
-
-  // Cleanup deletion timeout
-  return () => {
-    clearTimeout(deletionTimeout);
-  };
-}, [displayedText]); // Runs when displayedText changes
-
-const startTyping = () => {
-  let index = 0;
-  const typingInterval = setInterval(() => {
-    if (index < whimsicalText.length) {
-      setDisplayedText((prev) => prev + whimsicalText[index]);
-      index++;
-    } else {
-      clearInterval(typingInterval); // Stop typing when done
-    }
-  }, typingSpeed);
-};
-
-
 
   return (
     <View style={styles.container}>
@@ -106,52 +53,11 @@ const startTyping = () => {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 1</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 2</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 3</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 4</Text>
-        </TouchableOpacity>
+        {stories.map((story) => renderStoryPreview(story))}
       </ScrollView>
       <TouchableOpacity
         style={styles.addBtn}
-        onPress={() => navigation.navigate("Story")}
+        onPress={() => navigation.navigate("Story", { storyObj: {} })}
       >
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
@@ -206,6 +112,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
   },
   storyTitle: {
     fontSize: 25,

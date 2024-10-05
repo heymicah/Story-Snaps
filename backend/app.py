@@ -48,21 +48,21 @@ def generate_story_from_media(media_file, previous_stories, end_story):
     )
 
     # Create the prompt
-    if(end_story):
-        prompt = f"""Look at this image and create a short story based on what you see. 
+    if(not end_story):
+        prompt = f"""Look at this image and create a short story for kids based on what you see. 
         Be descriptive and creative.
         The story should be a continuation of the following story but do not end the story
         and leave room for expansion.
-
-        {previous_stories}
+        
+        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
         """
     else:
-        prompt = f"""Look at this image and create a short story based on what you see. 
+        prompt = f"""Look at this image and create a short story for kids based on what you see. 
         Be descriptive and creative.
         The story should be a continuation of the following story and you should have an
-        ending. If there is no following story, create a brand new story.
+        ending. 
 
-        {previous_stories}
+        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
         """
 
     # Send request to the model

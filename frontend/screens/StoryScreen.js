@@ -8,6 +8,7 @@ import {
   Image,
   TextInput,
   useWindowDimensions,
+  ScrollView,
 } from "react-native";
 import {
   useFonts,
@@ -23,7 +24,6 @@ const StoryScreen = ({ navigation }) => {
   });
   const [title, setTitle] = useState("Untitled");
   const [isEditing, setIsEditing] = useState(false);
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const handleEditPress = () => {
     setIsEditing(true);
@@ -100,32 +100,34 @@ const StoryScreen = ({ navigation }) => {
               source={require("../assets/placeholder.jpg")}
             />
           </View>
-          <Text style={styles.pageText}>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-            odit praesentium voluptate vel animi optio voluptatum beatae aliquam
-            deleniti? Itaque velit quos non placeat explicabo corporis ad
-            laudantium repellat vel, veniam, cupiditate aliquam tempora iure.
-            Obcaecati debitis distinctio deleniti eos esse nobis eveniet
-            similique harum magnam modi vel sint, officia illum voluptatum
-            perferendis. Fugiat blanditiis odit qui nostrum id voluptates nihil
-            itaque quod impedit cupiditate. Quos aperiam voluptates id maxime
-            corporis modi odio veritatis quaerat? Nostrum similique
-            exercitationem asperiores distinctio. Officia ad quo neque suscipit
-            excepturi labore recusandae earum ab saepe consequuntur, vitae nulla
-            vel perspiciatis velit reiciendis, repudiandae eos nisi non
-            provident beatae repellendus totam corrupti. Cupiditate, enim. Quo,
-            autem libero aperiam incidunt ab repellat corrupti rem amet nam
-            laborum suscipit, officiis sint qui ad velit neque? Ad consectetur
-            numquam deleniti repudiandae! Distinctio enim ab illo quidem quam
-            voluptatibus repellat, earum soluta possimus corporis veritatis
-            pariatur harum similique dolorem eum autem nostrum placeat nisi
-            optio accusantium impedit, sequi ipsum architecto cumque. Ex,
-            aperiam iure! Quod optio nemo magni iure ab animi veniam autem
-            excepturi sit sint, cupiditate tempore. Voluptatum accusamus dolores
-            perferendis, voluptates, dicta animi assumenda repellat esse natus
-            quibusdam adipisci magni consequuntur sunt suscipit blanditiis sequi
-            atque deleniti?
-          </Text>
+          <ScrollView style={styles.scrollView}>
+            <Text style={styles.pageText}>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Distinctio odit praesentium voluptate vel animi optio voluptatum
+              beatae aliquam deleniti? Itaque velit quos non placeat explicabo
+              corporis ad laudantium repellat vel, veniam, cupiditate aliquam
+              tempora iure. Obcaecati debitis distinctio deleniti eos esse nobis
+              eveniet similique harum magnam modi vel sint, officia illum
+              voluptatum perferendis. Fugiat blanditiis odit qui nostrum id
+              voluptates nihil itaque quod impedit cupiditate. Quos aperiam
+              voluptates id maxime corporis modi odio veritatis quaerat? Nostrum
+              similique exercitationem asperiores distinctio. Officia ad quo
+              neque suscipit excepturi labore recusandae earum ab saepe
+              consequuntur, vitae nulla vel perspiciatis velit reiciendis,
+              repudiandae eos nisi non provident beatae repellendus totam
+              corrupti. Cupiditate, enim. Quo, autem libero aperiam incidunt ab
+              repellat corrupti rem amet nam laborum suscipit, officiis sint qui
+              ad velit neque? Ad consectetur numquam deleniti repudiandae!
+              Distinctio enim ab illo quidem quam voluptatibus repellat, earum
+              soluta possimus corporis veritatis pariatur harum similique
+              dolorem eum autem nostrum placeat nisi optio accusantium impedit,
+              sequi ipsum architecto cumque. Ex, aperiam iure! Quod optio nemo
+              magni iure ab animi veniam autem excepturi sit sint, cupiditate
+              tempore. Voluptatum accusamus dolores perferendis, voluptates,
+              dicta animi assumenda repellat esse natus quibusdam adipisci magni
+              consequuntur sunt suscipit blanditiis sequi atque deleniti?
+            </Text>
+          </ScrollView>
         </View>
       </PagerView>
     </View>
@@ -180,6 +182,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: 60,
     height: 60,
+    zIndex: 1,
+    opacity: 0.75,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#080C0C",
@@ -226,6 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Roboto_400Regular",
     margin: 10,
+    color: "#080C0C",
   },
 });
 

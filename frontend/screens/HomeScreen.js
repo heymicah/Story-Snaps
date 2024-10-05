@@ -12,17 +12,17 @@ import {
 } from "react-native";
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from "@expo-google-fonts/dev";
+  ComicNeue_400Regular,
+  ComicNeue_700Bold,
+} from '@expo-google-fonts/comic-neue';
 
 const { width: screenWidth } = Dimensions.get("window");
 const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    ComicNeue_400Regular,
+    ComicNeue_700Bold,
   });
 
   const renderStoryPreview = (story) => {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   storyTitle: {
     fontSize: 25,
-    fontFamily: "Roboto_400Regular",
+    fontFamily: "ComicNeue_400Regular",
     color: "#080C0C",
   },
   addBtn: {

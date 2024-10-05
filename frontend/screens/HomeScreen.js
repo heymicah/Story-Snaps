@@ -47,14 +47,14 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_700Bold",
     color: "#080C0C",
     position: "absolute",
-    top: "15%", // Move the text higher than the button
+    top: "5%", // Move the text higher than the button
   },
   addBtn: {
     position: "absolute",
-    top: "60%", // Adjust this value to position the button lower than the text
-    alignSelf: "center", // Center horizontally
-    justifyContent: "center", // Center the text inside the button
-    alignItems: "center", // Center the text inside the button
+    bottom: "4%", // Distance from the bottom of the screen
+    right: "7.5%", // Distance from the right side of the screen
+    justifyContent: "center", // Center the "+" inside the button
+    alignItems: "center", // Center the "+" inside the button
     backgroundColor: "#3FA7D6",
     padding: 8,
     borderRadius: 20,

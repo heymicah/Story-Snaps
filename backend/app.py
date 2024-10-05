@@ -1,15 +1,16 @@
 import os
 import base64
 from io import BytesIO
-from PIL import Image as PILImage
 from flask import Flask, jsonify, request
 from google.cloud import aiplatform
 import vertexai
 from vertexai.generative_models import (
     GenerationConfig,
     GenerativeModel,
-    Image
+    Part
 )
+from vertexai.vision_models import Image as VertexImage
+
 
 app = Flask(__name__)
 
@@ -65,17 +66,14 @@ def generate_story_from_media(image_data, previous_stories, end_story):
     # Send request to the model
     try:
         # Load the image
-        image_stream = BytesIO(image_data)
-        pil_image = PILImage.open(image_stream)
-        image_stream.seek(0)
+        image_part = Part.from_data(image_data, mime_type="image/jpeg")
 
-        # Formatting the image to load
-        image = Image.load_from_pil(pil_image)
+        # Generate content with both the prompt and the image
         response = model.generate_content(
-            [prompt, image],
+            [prompt, image_part],
             generation_config=generation_config
         )
-        # Print the model's generated output
+        
         print(f"\nGenerated Output:\n{response.text}")
         return response.text
     except Exception as e:
@@ -86,7 +84,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 def home():
     return 'Hello, World!'
 
-@app.route('/generate')
+@app.route('/generate', methods=["POST"])
 def generate():
     # Load data
     data = request.get_json()

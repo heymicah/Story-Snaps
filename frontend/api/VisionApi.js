@@ -1,4 +1,8 @@
-const generateStory = async (base64Image, endStory, prevStories = "") => {
+export const generateStory = async (
+  base64Image,
+  endStory,
+  prevStories = ""
+) => {
   try {
     const response = await fetch("http://localhost:5000/generate", {
       method: "POST",

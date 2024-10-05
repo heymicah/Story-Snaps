@@ -41,8 +41,9 @@ const HomeScreen = ({ navigation }) => {
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
+          {/* Positioning the title on top of the image */}
+          <Text style={styles.storyTitle}>{story.title}</Text>
         </View>
-        <Text style={styles.storyTitle}>{story.title}</Text>
       </TouchableOpacity>
     );
   };
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     borderRadius: 10,
     overflow: "hidden",
+    position: "relative", // Needed for absolute positioning of text
   },
   image: {
     width: "100%",
@@ -118,9 +120,15 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   storyTitle: {
+    position: "absolute", // To overlay the text on the image
+    bottom: 10, // Adjust this value to control vertical placement
+    left: 10, // Adjust this value to control horizontal placement
     fontSize: 25,
-    fontFamily: "Baloo2_400Regular",
-    color: "#080C0C",
+    fontFamily: "Baloo2_700Bold",
+    color: "#FFF", // White text to contrast with the image
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for better readability
+    padding: 5,
+    borderRadius: 5,
   },
   addBtn: {
     position: "absolute",

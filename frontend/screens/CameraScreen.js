@@ -27,12 +27,23 @@ export default function App() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync(); // Capture the photo
+      await MediaLibrary.saveToLibraryAsync(photo.uri); // Save the photo to the device's media library
+      alert("Photo saved!");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <CameraView style={styles.camera} facing={facing}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={takePicture}>
+            <Text style={styles.text}>Take Picture</Text>
           </TouchableOpacity>
         </View>
       </CameraView>

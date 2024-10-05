@@ -35,5 +35,5 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# api access
+# Service Account
 serviceAccountKey.json

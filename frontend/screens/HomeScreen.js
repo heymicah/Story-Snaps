@@ -15,6 +15,8 @@ import {
   ComicNeue_400Regular,
   ComicNeue_700Bold,
 } from '@expo-google-fonts/comic-neue';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
 
 const { width: screenWidth } = Dimensions.get("window");
 const stories = getAllStories();

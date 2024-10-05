@@ -74,7 +74,7 @@ const StoryScreen = ({ navigation }) => {
         style={styles.backBtn}
         onPress={() => navigation.navigate("Home")}
       >
-        <Text style={styles.backBtnText}>Back to Home</Text>
+        <Text style={styles.backBtnText}>Return Home</Text>
       </TouchableOpacity>
 
       <PagerView style={styles.pagerView} initialPage={0}>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     position: "absolute",
-    bottom: 100, // Adjust this value if needed
+    bottom: 30, // Adjust this value if needed
     left: 30,
     backgroundColor: "#3FA7D6",
     borderRadius: 10,

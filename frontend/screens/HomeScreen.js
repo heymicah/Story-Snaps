@@ -5,6 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  ScrollView,
+  Image,
+  Dimensions,
 } from "react-native";
 import {
   useFonts,
@@ -12,11 +15,14 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
 
+const { width: screenWidth } = Dimensions.get("window");
+
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
   });
+
   
 // Whimsical text for no stories
 const whimsicalText = "Once upon a time in a land of dreams...";
@@ -93,28 +99,59 @@ const startTyping = () => {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{
-          fontSize: 40,
-          top: "7.5%",
-          fontFamily: "San Francisco",
-          fontWeight: "bold",
-          color: "#080C0C",
-          letterSpacing: 1,
-          // textTransform: "uppercase",
-        }}
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Story Snaps</Text>
+      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
-        Story Snaps
-      </Text>
-      <Text style={styles.whimsicalText}>
-          {displayedText}
-          {cursorVisible && <Text style={styles.cursor}>|</Text>}
-        </Text>
+        <TouchableOpacity style={styles.storyItem}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/placeholder.jpg")}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <Text style={styles.storyTitle}>Title 1</Text>
+        </TouchableOpacity>
 
-      {/* Add Button in the Bottom-Right Corner */}
+        <TouchableOpacity style={styles.storyItem}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/placeholder.jpg")}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <Text style={styles.storyTitle}>Title 2</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.storyItem}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/placeholder.jpg")}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <Text style={styles.storyTitle}>Title 3</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.storyItem}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../assets/placeholder.jpg")}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+          <Text style={styles.storyTitle}>Title 4</Text>
+        </TouchableOpacity>
+      </ScrollView>
       <TouchableOpacity
         style={styles.addBtn}
-        onPress={() => navigation.navigate("Camera")}
+        onPress={() => navigation.navigate("Story")}
       >
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
@@ -125,34 +162,76 @@ const startTyping = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#F0E6EF",
+  },
+  headerContainer: {
+    width: "100%",
+    backgroundColor: "#3FA7D6",
+    paddingTop: 50, // Adjust this value based on your device's status bar height
+    paddingBottom: 15,
+    alignItems: "center",
+  },
+  headerText: {
+    fontSize: 40,
+    color: "#080C0C",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingTop: 20,
+    paddingHorizontal: 20,
+  },
+  storyItem: {
+    marginBottom: 20,
+    alignItems: "center",
+    backgroundColor: "#59CD90",
+    borderRadius: 10,
+    shadowColor: "#080C0C",
+    shadowOffset: { width: 5, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    ...Platform.select({
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  imageContainer: {
+    width: screenWidth - 40,
+    aspectRatio: 16 / 9,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  storyTitle: {
+    fontSize: 25,
+    fontFamily: "Roboto_400Regular",
+    color: "#080C0C",
   },
   addBtn: {
     position: "absolute",
-    bottom: "4%", // Distance from the bottom of the screen
-    right: "7.5%", // Distance from the right side of the screen
-    justifyContent: "center", // Center the "+" inside the button
-    alignItems: "center", // Center the "+" inside the button
+    bottom: 20,
+    right: 20,
     backgroundColor: "#3FA7D6",
-    padding: 8,
+    padding: 12,
     borderRadius: 20,
-
-    // iOS Shadow Properties
+    opacity: 0.8,
     shadowColor: "#080C0C",
-    shadowOffset: { width: 5, height: 5 }, // Add height to the shadow
+    shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 0.8,
-    shadowRadius: 5, // Controls the blur radius of the shadow
-
-    // Android Shadow (Elevation)
+    shadowRadius: 5,
     ...Platform.select({
       android: {
-        elevation: 8, // Adds shadow on Android
+        elevation: 8,
       },
     }),
   },
   addBtnText: {
-    fontSize: 25, // Make "+" larger
+    fontSize: 18,
     color: "#080C0C",
     fontFamily: "San Francisco",
   },

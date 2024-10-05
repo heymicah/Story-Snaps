@@ -1,7 +1,7 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import * as MediaLibrary from 'expo-media-library'; // Import MediaLibrary
+// import * as MediaLibrary from 'expo-media-library'; // Import MediaLibrary
 import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 

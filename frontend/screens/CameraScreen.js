@@ -41,6 +41,7 @@ export default function App() {
   }
 
   const takePicture = async () => {
+    // still need to force picture to be in landscape mode
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync(); // Capture the photo
 

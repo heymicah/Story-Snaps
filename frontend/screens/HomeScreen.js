@@ -1,4 +1,5 @@
 import React from "react";
+import { getAllStories } from "../api/StorageApi";
 import {
   View,
   Text,
@@ -16,12 +17,32 @@ import {
 } from "@expo-google-fonts/dev";
 
 const { width: screenWidth } = Dimensions.get("window");
+const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
   });
+
+  const renderStoryPreview = (story) => {
+    return (
+      <TouchableOpacity
+        key={story.id}
+        style={styles.storyItem}
+        onPress={() => navigation.navigate("Story", { storyObj: story })}
+      >
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../assets/placeholder.png")} // adjust to reference the image in the story object instead of placeholder
+            defaultSource={require("../assets/placeholder.png")}
+            style={styles.image}
+          />
+        </View>
+        <Text style={styles.storyTitle}>{story.title}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -32,52 +53,11 @@ const HomeScreen = ({ navigation }) => {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 1</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 2</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 3</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.storyItem}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../assets/placeholder.jpg")}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </View>
-          <Text style={styles.storyTitle}>Title 4</Text>
-        </TouchableOpacity>
+        {stories.map((story) => renderStoryPreview(story))}
       </ScrollView>
       <TouchableOpacity
         style={styles.addBtn}
-        onPress={() => navigation.navigate("Story")}
+        onPress={() => navigation.navigate("Story", { storyObj: {} })}
       >
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
@@ -132,6 +112,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    resizeMode: "cover",
   },
   storyTitle: {
     fontSize: 25,

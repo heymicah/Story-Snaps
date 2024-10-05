@@ -1,8 +1,15 @@
-export const generateStory = async (base64Image, endStory, prevStories = "") => {
+export const generateStory = async (
+  base64Image,
+  endStory,
+  prevStories = ""
+) => {
   try {
-    console.log("Sending request with data:", { endStory, prevStories: prevStories.substring(0, 100) });
+    console.log("Sending request with data:", {
+      endStory,
+      prevStories: prevStories.substring(0, 100),
+    });
 
-    const response = await fetch("http://localhost:5000/generate", {
+    const response = await fetch("{insert url here}", {
       method: "POST",
       body: JSON.stringify({
         image: base64Image,
@@ -20,7 +27,9 @@ export const generateStory = async (base64Image, endStory, prevStories = "") => 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error response body:", errorText);
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`
+      );
     }
 
     const data = await response.json();

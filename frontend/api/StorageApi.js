@@ -55,6 +55,7 @@ export const getAllStories = () => {
     {
       id: "1",
       title: "Story 1",
+      isFinished: false,
       pages: [
         {
           pageNum: 1,
@@ -71,6 +72,7 @@ export const getAllStories = () => {
     {
       id: "2",
       title: "Story 2",
+      isFinished: false,
       pages: [
         {
           pageNum: 1,

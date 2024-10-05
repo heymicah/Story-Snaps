@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,15 +6,16 @@ import {
   StyleSheet,
   Platform,
   Image,
-  TextInput,
   ScrollView,
+  Switch,
 } from "react-native";
 import {
   useFonts,
   Roboto_400Regular,
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
-import {generateStory} from '../api/VisionApi';
+import { generateStory } from "../api/VisionApi";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 const GenerateScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -25,38 +26,92 @@ const GenerateScreen = ({ route, navigation }) => {
   const { photo } = route.params;
 
   const [text, setText] = useState("");
+  const [isEnding, setIsEnding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedOnce, setGeneratedOnce] = useState(false);
+  async function returnToPortrait() {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT
+    );
+  }
+  useEffect(() => {
+    returnToPortrait();
+    return () => {
+      ScreenOrientation.unlockAsync(); // Unlock when component unmounts
+    };
+  }, []);
 
-
-  
+  const handleGenerateStory = async () => {
+    try {
+      const result = await generateStory(photo, isEnding);
+      if (result && result.story) {
+        setText(result.story);
+        if (!generatedOnce) setGeneratedOnce(true);
+      } else {
+        console.error("Unexpected response format:", result);
+        setText("Failed to generate story. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error generating story:", error);
+      setText(
+        "An error occurred while generating the story. Please try again."
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={{ uri: `data:image/jpeg;base64,${photo}` }} // Set base64-encoded image
-          />
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={{ uri: `data:image/jpeg;base64,${photo}` }} // Set base64-encoded image
+        />
+      </View>
+      <ScrollView style={styles.scrollView}>
+        <Text style={styles.pageText}>{text}</Text>
+      </ScrollView>
+      <View style={styles.nestedView}>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Camera")}
+          >
+            <Text style={styles.buttonText}>Retake Picture</Text>
+          </TouchableOpacity>
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchLabel}>End Story:</Text>
+            <Switch
+              value={isEnding}
+              onValueChange={setIsEnding}
+              trackColor={{ false: "#3FA7D6", true: "#E75A7C" }}
+              thumbColor="#F0E6EF"
+            />
+          </View>
         </View>
-        <ScrollView style={styles.scrollView}>
-          <Text style={styles.pageText}>{text}</Text>
-        </ScrollView>
-
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => setText(generateStory(photo, false))}
-      >
-        <Text style={styles.addBtnText}>+</Text>
-      </TouchableOpacity>
-
-      {/* Back to Home Button */}
-      <TouchableOpacity
-        style={styles.backBtn}
-        onPress={() => navigation.navigate("Home")}
-      >
-        <Text style={styles.backBtnText}>Return Home</Text>
-      </TouchableOpacity>
-
-      
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleGenerateStory}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading
+                ? "Generating..."
+                : generatedOnce
+                ? "Regenerate"
+                : "Generate"}
+            </Text>
+          </TouchableOpacity>
+          {generatedOnce && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("Story", { storyObj: {} })} // should also save the story to local storage
+            >
+              <Text style={styles.buttonText}>Save Story</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </View>
   );
 };
@@ -102,18 +157,14 @@ const styles = StyleSheet.create({
     height: 30,
   },
   addBtn: {
-    position: "absolute",
-    bottom: 30,
-    right: 30,
     backgroundColor: "#3FA7D6",
-    borderRadius: 30,
-    width: 60,
-    height: 60,
+    borderRadius: 15,
     zIndex: 1,
     opacity: 0.8,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#080C0C",
+    flex: 1,
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 0.8,
     shadowRadius: 5,
@@ -124,50 +175,13 @@ const styles = StyleSheet.create({
     }),
   },
   addBtnText: {
-    fontSize: 50,
+    fontSize: 20,
     color: "#080C0C",
     fontFamily: "Roboto_700Bold",
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
     lineHeight: 56,
-  },
-  backBtn: {
-    position: "absolute",
-    bottom: 35, // Adjust this value if needed
-    left: 30,
-    backgroundColor: "#3FA7D6",
-    borderRadius: 10,
-    padding: 10,
-    zIndex: 1,
-    opacity: 0.8,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#080C0C",
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
-    ...Platform.select({
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  backBtnText: {
-    fontSize: 16,
-    color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
-    textAlign: "center",
-  },
-  pagerView: {
-    flex: 1,
-  },
-  page: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    width: "100%",
-    backgroundColor: "#F0E6EF",
   },
   imageContainer: {
     width: "100%",
@@ -191,6 +205,55 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
+  },
+  buttonView: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  nestedView: {
+    marginBottom: 20,
+    paddingTop: 10,
+    paddingHorizontal: 10,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#3FA7D6",
+    borderRadius: 15,
+    padding: 10,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 50,
+    shadowColor: "#080C0C",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "#080C0C",
+    fontFamily: "Roboto_700Bold",
+    textAlign: "center",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flex: 1,
+    marginLeft: "7%",
+  },
+  switchLabel: {
+    fontSize: 16,
+    fontFamily: "Roboto_400Regular",
+    marginRight: 10,
+    color: "#080C0C",
   },
 });
 

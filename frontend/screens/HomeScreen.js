@@ -17,75 +17,78 @@ const HomeScreen = ({ navigation }) => {
     Roboto_400Regular,
     Roboto_700Bold,
   });
-
-  // Whimsical text for no stories
-  const whimsicalText = "Once upon a time in a land of dreams...";
   
-  // State for typing effect
-  const [displayedText, setDisplayedText] = useState("");
-  const [cursorVisible, setCursorVisible] = useState(true);
-  const typingSpeed = 100; // Typing speed in milliseconds
-  const deletionSpeed = 40; // Deletion speed in milliseconds
+// Whimsical text for no stories
+const whimsicalText = "Once upon a time in a land of dreams...";
+  
+// State for typing effect
+const [displayedText, setDisplayedText] = useState("");
+const [cursorVisible, setCursorVisible] = useState(true);
+const typingSpeed = 100; // Typing speed in milliseconds
+const deletionSpeed = 50; // Deletion speed in milliseconds
 
-  useEffect(() => {
-    let index = 0;
-    const typingInterval = setInterval(() => {
-      if (index < whimsicalText.length) {
-        setDisplayedText((prev) => prev + whimsicalText[index]);
-        index++;
+useEffect(() => {
+  let index = 0;
+
+  // Typing effect
+  const typingInterval = setInterval(() => {
+    if (index < whimsicalText.length) {
+      setDisplayedText((prev) => prev + whimsicalText[index]);
+      index++;
+    } else {
+      clearInterval(typingInterval); // Stop typing when done
+    }
+  }, typingSpeed);
+
+  // Blinking cursor effect
+  const cursorInterval = setInterval(() => {
+    setCursorVisible((prev) => !prev);
+  }, 500); // Change cursor visibility every 500ms
+
+  // Cleanup intervals on unmount
+  return () => {
+    clearInterval(typingInterval);
+    clearInterval(cursorInterval);
+  };
+}, []); // Run only on mount
+
+// Deleting effect after 10 seconds
+useEffect(() => {
+  const deletionTimeout = setTimeout(() => {
+    let index = displayedText.length;
+
+    const deletionInterval = setInterval(() => {
+      if (index > 0) {
+        setDisplayedText((prev) => prev.slice(0, -1));
+        index--;
       } else {
-        clearInterval(typingInterval); // Stop the interval when done
+        clearInterval(deletionInterval);
+        // Restart the typing effect
+        setTimeout(() => {
+          startTyping();
+        }, 500); // Delay before restarting the typing
       }
-    }, typingSpeed);
+    }, deletionSpeed);
+  }, 10000); // Start deleting after 10 seconds
 
-    // Blinking cursor effect
-    const cursorInterval = setInterval(() => {
-      setCursorVisible((prev) => !prev);
-    }, 500); // Change cursor visibility every 500ms
+  // Cleanup deletion timeout
+  return () => {
+    clearTimeout(deletionTimeout);
+  };
+}, [displayedText]); // Runs when displayedText changes
 
-    // Cleanup intervals on unmount
-    return () => {
-      clearInterval(typingInterval);
-      clearInterval(cursorInterval);
-    };
-  }, []); // Run only on mount
+const startTyping = () => {
+  let index = 0;
+  const typingInterval = setInterval(() => {
+    if (index < whimsicalText.length) {
+      setDisplayedText((prev) => prev + whimsicalText[index]);
+      index++;
+    } else {
+      clearInterval(typingInterval); // Stop typing when done
+    }
+  }, typingSpeed);
+};
 
-    // Deleting effect after 10 seconds
-    useEffect(() => {
-      const deletionTimeout = setTimeout(() => {
-        let index = displayedText.length;
-  
-        const deletionInterval = setInterval(() => {
-          if (index > 0) {
-            setDisplayedText((prev) => prev.slice(0, -1));
-            index--;
-          } else {
-            clearInterval(deletionInterval);
-            // Restart the typing effect
-            setTimeout(() => {
-              startTyping();
-            }, 500); // Delay before restarting the typing
-          }
-        }, deletionSpeed);
-      }, 10000); // Start deleting after 10 seconds
-  
-      // Cleanup deletion timeout
-      return () => {
-        clearTimeout(deletionTimeout);
-      };
-    }, [displayedText]); // Runs when displayedText changes
-
-    const startTyping = () => {
-      let index = 0;
-      const typingInterval = setInterval(() => {
-        if (index < whimsicalText.length) {
-          setDisplayedText((prev) => prev + whimsicalText[index]);
-          index++;
-        } else {
-          clearInterval(typingInterval); // Stop typing when done
-        }
-      }, typingSpeed);
-    };
 
 
   return (
@@ -155,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default HomeScreen

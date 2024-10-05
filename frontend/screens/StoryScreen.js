@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     position: "absolute",
-    bottom: 30, // Adjust this value if needed
+    bottom: 35, // Adjust this value if needed
     left: 30,
     backgroundColor: "#3FA7D6",
     borderRadius: 10,

@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
         Story Snaps
       </Text>
 
-      {/* Add Button in the Bottom-Right Corner */}
+      {/* Center the Button and move it higher on the screen */}
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => navigation.navigate("Camera")}
@@ -45,33 +45,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center", // Center the content vertically
     backgroundColor: "#F0E6EF",
   },
   addBtn: {
     position: "absolute",
-    bottom: "4%", // Distance from the bottom of the screen
-    right: "7.5%", // Distance from the right side of the screen
-    justifyContent: "center", // Center the "+" inside the button
-    alignItems: "center", // Center the "+" inside the button
+    top: "60%", // Move the button higher up (adjust percentage as needed)
+    alignSelf: "center", // Center horizontally
+    justifyContent: "center", // Center the text inside the button
+    alignItems: "center", // Center the text inside the button
     backgroundColor: "#3FA7D6",
     padding: 8,
     borderRadius: 20,
 
     // iOS Shadow Properties
     shadowColor: "#080C0C",
-    shadowOffset: { width: 5, height: 5 }, // Add height to the shadow
+    shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 0.8,
-    shadowRadius: 5, // Controls the blur radius of the shadow
+    shadowRadius: 5,
 
     // Android Shadow (Elevation)
     ...Platform.select({
       android: {
-        elevation: 8, // Adds shadow on Android
+        elevation: 8,
       },
     }),
   },
   addBtnText: {
-    fontSize: 25, // Make "+" larger
+    fontSize: 25,
     color: "#080C0C",
     fontFamily: "Roboto_700Bold",
   },

@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   backBtnText: {
     fontSize: 16,
-    color: "#FFF",
+    color: "#080C0C",
     fontFamily: "Roboto_700Bold",
     textAlign: "center",
   },

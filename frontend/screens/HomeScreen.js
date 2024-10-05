@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontSize: 18,
     color: "#080C0C",
+    fontFamily: "San Francisco",
   },
 });
 
-export default HomeScreen;
+export default HomeScreen

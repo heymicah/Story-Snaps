@@ -8,11 +8,13 @@ from vertexai.generative_models import (
     GenerationConfig,
     GenerativeModel,
     Part
+    Part
 )
 from vertexai.vision_models import Image as VertexImage
 
 
 app = Flask(__name__)
+CORS(app)
 
 # Set up the Google Application Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./serviceAccountKey.json"
@@ -69,12 +71,16 @@ def generate_story_from_media(image_data, previous_stories, end_story):
     try:
         # Load the image
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
+        image_part = Part.from_data(image_data, mime_type="image/jpeg")
 
+        # Generate content with both the prompt and the image
         # Generate content with both the prompt and the image
         response = model.generate_content(
             [prompt, image_part],
+            [prompt, image_part],
             generation_config=generation_config
         )
+        
         
         print(f"\nGenerated Output:\n{response.text}")
         return response.text
@@ -86,6 +92,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 def home():
     return 'Hello, World!'
 
+@app.route('/generate', methods=["POST"])
 @app.route('/generate', methods=["POST"])
 def generate():
     # Load data

@@ -1,0 +1,4 @@
+Flask
+flask-Cors
+python-dotenv
+google-cloud-aiplatform

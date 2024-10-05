@@ -1,3 +1,4 @@
+// just homme screen for now
 import React from "react";
 import {
   View,

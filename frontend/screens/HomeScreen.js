@@ -1,3 +1,4 @@
+// just homme screen for now
 import React from "react";
 import {
   View,
@@ -33,7 +34,7 @@ const HomeScreen = ({ navigation }) => {
       {/* Add Button in the Bottom-Right Corner */}
       <TouchableOpacity
         style={styles.addBtn}
-        onPress={() => navigation.navigate("Camera")}
+        onPress={() => navigation.navigate("Story")}
       >
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>

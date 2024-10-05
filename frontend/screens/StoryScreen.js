@@ -11,15 +11,17 @@ import {
 } from "react-native";
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from "@expo-google-fonts/dev";
+  Baloo2_400Regular,
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
+} from '@expo-google-fonts/baloo-2';
 import PagerView from "react-native-pager-view";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Baloo2_400Regular,
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
   });
   const { storyObj } = route.params;
   const isNewStory = !storyObj || Object.keys(storyObj).length === 0;
@@ -129,14 +131,14 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 30,
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     color: "#080C0C",
     textAlign: "center",
     marginTop: "12%",
   },
   titleInput: {
     fontSize: 30,
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     color: "#080C0C",
     borderBottomWidth: 1,
     borderBottomColor: "#080C0C",
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontSize: 50,
     color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   backBtnText: {
     fontSize: 16,
     color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     textAlign: "center",
   },
   pagerView: {

@@ -10,7 +10,7 @@ export const generateStory = async (
     });
 
     const response = await fetch(
-      "https://bab9-128-227-1-12.ngrok-free.app/generate",
+      "https://story-generator-155882594275.us-central1.run.app/generate",
       {
         method: "POST",
         body: JSON.stringify({

@@ -180,11 +180,11 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontSize: 50,
     color: "#080C0C",
-    fontFamily: "Baloo2_700Bold",
+    fontFamily: "Roboto_700Bold",
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
-    lineHeight: 56,
+    lineHeight: 5,
   },
   backBtn: {
     position: "absolute",

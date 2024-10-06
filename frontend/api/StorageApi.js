@@ -157,7 +157,7 @@ export const createNewStory = async () => {
     const newId = generateUniqueId(stories);
     const newStory = {
       id: newId,
-      title: "New Story",
+      title: `Story ${newId}`,
       isFinished: false,
       pages: [],
     };

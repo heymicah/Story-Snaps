@@ -102,10 +102,6 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  if (loading) {
-    return <Text>Loading stories...</Text>;
-  }
-
   return (
     <View style={styles.container}>
       <Animated.View
@@ -210,6 +206,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 20,
+    opacity: 0.95
   },
   storyTitle: {
     fontSize: 20,

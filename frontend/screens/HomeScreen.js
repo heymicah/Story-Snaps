@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   storyTitle: {
     fontSize: 20,
-    fontFamily: "Baloo2_700Bold",
+    fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C", // Story # text color
   },
   addBtn: {

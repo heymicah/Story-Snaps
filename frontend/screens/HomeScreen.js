@@ -1,5 +1,7 @@
-import React, { useRef } from "react";
-import { getAllStories } from "../api/StorageApi";
+import React, { useState, useEffect } from "react";
+import { getAllStories, createNewStory } from "../api/StorageApi";
+import eventEmitter from '../eventEmitter';
+
 import {
   View,
   Text,
@@ -19,7 +21,6 @@ import {
 } from '@expo-google-fonts/baloo-2';
 
 const { width: screenWidth } = Dimensions.get("window");
-const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -28,8 +29,54 @@ const HomeScreen = ({ navigation }) => {
     Baloo2_700Bold,
   });
 
-  // Create a ref for the scroll offset
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStories();
+  
+    const storageUpdateListener = () => {
+      loadStories();
+    };
+  
+    const storyUpdateListener = (updatedStory) => {
+      setStories(prevStories => 
+        prevStories.map(story => 
+          story.id === updatedStory.id ? updatedStory : story
+        )
+      );
+    };
+  
+    eventEmitter.on('storageUpdated', storageUpdateListener);
+    eventEmitter.on('storyUpdated', storyUpdateListener);
+  
+    return () => {
+      eventEmitter.off('storageUpdated', storageUpdateListener);
+      eventEmitter.off('storyUpdated', storyUpdateListener);
+    };
+  }, []);
+
+  const loadStories = async () => {
+    try {
+      const loadedStories = await getAllStories();
+      setStories(loadedStories);
+    } catch (error) {
+      console.error("Error loading stories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNewStory = async () => {
+    try {
+      const newStory = await createNewStory();
+      setStories((prevStories) => [...prevStories, newStory]);
+      navigation.navigate("Story", { storyObj: newStory });
+      loadStories();
+    } catch (error) {
+      console.error("Error creating new story:", error);
+    }
+  };
 
   const renderStoryPreview = (story) => {
     return (
@@ -40,7 +87,11 @@ const HomeScreen = ({ navigation }) => {
       >
         <View style={styles.imageContainer}>
           <Image
-            source={require("../assets/placeholder.png")} // Adjust to reference the image in the story object instead of placeholder
+            source={
+              story.pages.length > 0
+                ? { uri: story.pages[0].imagePath }
+                : require("../assets/placeholder.png")
+            } // adjust to reference the image in the story object instead of placeholder
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
@@ -53,8 +104,9 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  // Create an Animated ScrollView
-  const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+  if (loading) {
+    return <Text>Loading stories...</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -86,12 +138,13 @@ const HomeScreen = ({ navigation }) => {
         )}
         scrollEventThrottle={16}
       >
-        {stories.map((story) => renderStoryPreview(story))}
-      </AnimatedScrollView>
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => navigation.navigate("Story", { storyObj: {} })}
-      >
+        {stories.length > 0 ? (
+          stories.map((story) => renderStoryPreview(story))
+        ) : (
+          <Text>Create a Story to get started!</Text>
+        )}
+      </ScrollView>
+      <TouchableOpacity style={styles.addBtn} onPress={handleNewStory}>
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
     </View>
@@ -188,6 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C",
+    fontFamily: "San Francisco",
   },
 });
 

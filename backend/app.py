@@ -1,18 +1,19 @@
 import os
 import base64
 from io import BytesIO
-from PIL import Image as PILImage
 from flask import Flask, jsonify, request
 from google.cloud import aiplatform
 import vertexai
 from vertexai.generative_models import (
     GenerationConfig,
     GenerativeModel,
-    Image
+    Part
 )
+from vertexai.vision_models import Image as VertexImage
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app, resources={r"/*": {"origins": "*"}})
 # Set up the Google Application Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./serviceAccountKey.json"
 
@@ -43,39 +44,98 @@ def generate_story_from_media(image_data, previous_stories, end_story):
         candidate_count=1,
         max_output_tokens=2048,
     )
-
+    print(previous_stories)
     # Create the prompt
-    if(not end_story):
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story but do not end the story
-        and leave room for expansion.
-        
-        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
-        """
-    else:
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story and you should have an
-        ending. 
+    if(end_story):
+        if(previous_stories):
+            prompt = f"""
+            You are a creative storyteller for children aged 6-8. Conclude an existing story based on the final image provided and the following context:
 
-        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
-        """
+            Previous story: {previous_stories}
+
+            Guidelines:
+            - Write 75-125 words that wrap up the story with a satisfying ending.
+            - Incorporate elements from the final image into the conclusion.
+            - Maintain consistency with existing story elements and characters.
+            - Resolve the main conflict or challenge introduced in the story.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Provide a clear ending that ties up loose ends.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, conclude the story based on the final image and these guidelines.
+            """
+        else:
+            prompt = """
+            You are a creative storyteller for children aged 6-8. Create a complete short story based on the single image provided. Guidelines:
+
+            - Write a 100-150 word story with a clear beginning, middle, and end.
+            - Describe and incorporate key elements from the image into your story.
+            - Introduce characters, set up a scenario, and provide a satisfying conclusion.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Ensure the story has a complete arc with a resolution.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, create a complete short story based on the image and these guidelines.
+            """
+    else:
+        if(previous_stories):
+            prompt = f"""
+            You are a creative storyteller for children aged 6-8. Continue an existing story based on the new image provided and the following context:
+
+            Previous story: {previous_stories}
+
+            Guidelines:
+            - Write 75-100 words that naturally continue the existing story.
+            - Incorporate elements from the new image seamlessly into the narrative.
+            - Maintain consistency with existing story elements and characters.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Leave room for future continuation of the story.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, continue the story based on the new image and these guidelines.
+            """
+        else:
+            prompt = """
+            You are a creative storyteller for children aged 6-8. Create an engaging opening chapter for a new story based on the image provided. Guidelines:
+
+            - Write 75-100 words.
+            - Describe and incorporate key elements from the image into your story.
+            - Introduce main characters and set up an interesting scenario.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Leave room for future continuation of the story.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, create the opening chapter of the story based on the image and these guidelines.
+            """
 
     # Send request to the model
     try:
         # Load the image
-        image_stream = BytesIO(image_data)
-        pil_image = PILImage.open(image_stream)
-        image_stream.seek(0)
 
-        # Formatting the image to load
-        image = Image.load_from_pil(pil_image)
+        print(prompt)
+        image_part = Part.from_data(image_data, mime_type="image/jpeg")
+        image_part = Part.from_data(image_data, mime_type="image/jpeg")
+
+        # Generate content with both the prompt and the image
+        # Generate content with both the prompt and the image
         response = model.generate_content(
-            [prompt, image],
+            [prompt, image_part],
             generation_config=generation_config
         )
-        # Print the model's generated output
+        
+        
         print(f"\nGenerated Output:\n{response.text}")
         return response.text
     except Exception as e:
@@ -86,7 +146,8 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 def home():
     return 'Hello, World!'
 
-@app.route('/generate')
+@app.route('/generate', methods=["POST"])
+@app.route('/generate', methods=["POST"])
 def generate():
     # Load data
     data = request.get_json()

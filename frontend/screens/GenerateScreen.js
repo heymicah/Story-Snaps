@@ -12,8 +12,9 @@ import {
 } from "react-native";
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
+  Baloo2_400Regular,
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
 } from "@expo-google-fonts/dev";
 import { generateStory } from "../api/VisionApi";
 import { addPageToStory, setStoryEnding } from "../api/StorageApi";
@@ -21,8 +22,9 @@ import * as ScreenOrientation from "expo-screen-orientation";
 
 const GenerateScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Baloo2_400Regular,
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
   });
 
   const { photo } = route.params;
@@ -153,67 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F0E6EF",
   },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    backgroundColor: "#3FA7D6",
-    paddingHorizontal: 20,
-  },
-  titleText: {
-    fontSize: 30,
-    fontFamily: "Roboto_700Bold",
-    color: "#080C0C",
-    textAlign: "center",
-    marginTop: "12%",
-  },
-  titleInput: {
-    fontSize: 30,
-    fontFamily: "Roboto_700Bold",
-    color: "#080C0C",
-    borderBottomWidth: 1,
-    borderBottomColor: "#080C0C",
-    marginTop: 50,
-    textAlign: "center",
-    minWidth: 200,
-  },
-  editIconContainer: {
-    marginLeft: 10,
-    padding: 5,
-    marginTop: "12%",
-  },
-  editIcon: {
-    width: 30,
-    height: 30,
-  },
-  addBtn: {
-    backgroundColor: "#3FA7D6",
-    borderRadius: 15,
-    zIndex: 1,
-    opacity: 0.8,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#080C0C",
-    flex: 1,
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
-    ...Platform.select({
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  addBtnText: {
-    fontSize: 20,
-    color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
-    textAlign: "center",
-    textAlignVertical: "center",
-    includeFontPadding: false,
-    lineHeight: 56,
-  },
   imageContainer: {
     width: "100%",
     aspectRatio: 4 / 3, // Adjust this ratio based on your image's aspect ratio
@@ -227,8 +168,8 @@ const styles = StyleSheet.create({
   },
   pageText: {
     marginTop: 10,
-    fontSize: 16,
-    fontFamily: "Roboto_400Regular",
+    fontSize: 22,
+    fontFamily: "Baloo2_400Regular",
     margin: 10,
     color: "#080C0C",
   },
@@ -270,7 +211,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     textAlign: "center",
   },
   switchContainer: {
@@ -282,7 +223,7 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     fontSize: 16,
-    fontFamily: "Roboto_400Regular",
+    fontFamily: "Baloo2_700Bold",
     marginRight: 10,
     color: "#080C0C",
   },

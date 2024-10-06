@@ -27,8 +27,8 @@ const StoryScreen = ({ route, navigation }) => {
   });
   const { storyObj } = route.params;
   const isNewStory = !storyObj || storyObj.pages.length === 0;
-  const [title, setTitle] = useState(isNewStory && storyObj.title === "New Story" ? "New Story" : storyObj.title);
-  const [isEditing, setIsEditing] = useState(isNewStory);
+  const [title, setTitle] = useState(storyObj.title);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleEditPress = () => {
     setIsEditing(true);
@@ -215,11 +215,11 @@ const styles = StyleSheet.create({
   addBtnText: {
     fontSize: 50,
     color: "#080C0C",
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Baloo2_700Bold",
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
-    lineHeight: 50,
+    lineHeight: 77,
   },
   backBtn: {
     position: "absolute",
@@ -271,8 +271,8 @@ const styles = StyleSheet.create({
   },
   pageText: {
     marginTop: 10,
-    fontSize: 16,
-    fontFamily: "Baloo2_600SemiBold",
+    fontSize: 22,
+    fontFamily: "Baloo2_400Regular",
     margin: 10,
     color: "#080C0C",
   },

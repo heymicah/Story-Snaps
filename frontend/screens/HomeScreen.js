@@ -9,6 +9,7 @@ import {
   Animated,
   Image,
   Dimensions,
+  Scrollview,
 } from "react-native";
 import {
   useFonts,

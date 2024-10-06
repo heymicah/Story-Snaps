@@ -37,12 +37,14 @@ const HomeScreen = ({ navigation }) => {
       >
         <View style={styles.imageContainer}>
           <Image
-            source={require("../assets/placeholder.png")} // adjust to reference the image in the story object instead of placeholder
+            source={require("../assets/placeholder.png")} // Adjust to reference the image in the story object instead of placeholder
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
-          {/* Positioning the title on top of the image */}
-          <Text style={styles.storyTitle}>{story.title}</Text>
+          {/* Rounded container for the text */}
+          <View style={styles.textContainer}>
+            <Text style={styles.storyTitle}>{story.title}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -119,16 +121,19 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover",
   },
-  storyTitle: {
-    position: "absolute", // To overlay the text on the image
+  textContainer: {
+    position: "absolute", // To overlay the text container on the image
     bottom: 10, // Adjust this value to control vertical placement
     left: 10, // Adjust this value to control horizontal placement
-    fontSize: 25,
+    backgroundColor: "#3FA7D6", // Solid color for the rounded container
+    paddingHorizontal: 15, // Add horizontal padding inside the container
+    paddingVertical: 5, // Add vertical padding inside the container
+    borderRadius: 20, // Rounded corners for the container
+  },
+  storyTitle: {
+    fontSize: 20,
     fontFamily: "Baloo2_700Bold",
-    color: "#FFF", // White text to contrast with the image
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for better readability
-    padding: 5,
-    borderRadius: 5,
+    color: "#FFF", // White text for contrast
   },
   addBtn: {
     position: "absolute",

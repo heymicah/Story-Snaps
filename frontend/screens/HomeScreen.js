@@ -9,7 +9,7 @@ import {
   Animated,
   Image,
   Dimensions,
-  ScrollView, // Ensure ScrollView is imported
+  ScrollView,
 } from "react-native";
 import {
   useFonts,
@@ -28,7 +28,6 @@ const HomeScreen = ({ navigation }) => {
     Baloo2_700Bold,
   });
 
-  // Create a ref for the scroll offset
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const renderStoryPreview = (story) => {
@@ -44,7 +43,6 @@ const HomeScreen = ({ navigation }) => {
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
-          {/* Rounded container for the text */}
           <View style={styles.textContainer}>
             <Text style={styles.storyTitle}>{story.title}</Text>
           </View>
@@ -53,12 +51,10 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  // Create an Animated ScrollView
   const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
   return (
     <View style={styles.container}>
-      {/* Animated Header */}
       <Animated.View
         style={[
           styles.headerContainer,
@@ -67,7 +63,7 @@ const HomeScreen = ({ navigation }) => {
               {
                 translateY: scrollY.interpolate({
                   inputRange: [0, 100],
-                  outputRange: [0, -100], // Adjust the output range as needed
+                  outputRange: [0, -100],
                   extrapolate: "clamp",
                 }),
               },
@@ -85,6 +81,7 @@ const HomeScreen = ({ navigation }) => {
           { useNativeDriver: true },
         )}
         scrollEventThrottle={16}
+        contentInsetAdjustmentBehavior="automatic" // Automatically adjust the insets
       >
         {stories.map((story) => renderStoryPreview(story))}
       </AnimatedScrollView>
@@ -105,13 +102,13 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     width: "100%",
-    backgroundColor: "#3FA7D6",
-    paddingTop: 40, // Adjust this value based on your device's status bar height
-    paddingBottom: 0,
+    backgroundColor: "rgba(63, 167, 214, 0.9)", // Use a semi-transparent background
+    paddingTop: 50,
+    paddingBottom: 15,
     alignItems: "center",
-    position: "absolute", // Make it absolute for the header to overlay the scroll
-    top: 0, // Align to the top of the screen
-    zIndex: 1, // Ensure the header is above the scroll view
+    position: "absolute",
+    top: 0,
+    zIndex: 1,
   },
   headerText: {
     fontSize: 40,
@@ -120,7 +117,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    marginTop: 100, // Add margin top to account for the header height
+    marginTop: 100, // Adjust margin to make room for the header
   },
   scrollViewContent: {
     paddingTop: 20,
@@ -146,7 +143,7 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     borderRadius: 10,
     overflow: "hidden",
-    position: "relative", // Needed for absolute positioning of text
+    position: "relative",
   },
   image: {
     width: "100%",
@@ -154,18 +151,18 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   textContainer: {
-    position: "absolute", // To overlay the text container on the image
-    bottom: 10, // Adjust this value to control vertical placement
-    left: 10, // Adjust this value to control horizontal placement
-    backgroundColor: "#3FA7D6", // Solid color for the rounded container
-    paddingHorizontal: 15, // Add horizontal padding inside the container
-    paddingVertical: 5, // Add vertical padding inside the container
-    borderRadius: 20, // Rounded corners for the container
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    backgroundColor: "#3FA7D6",
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 20,
   },
   storyTitle: {
     fontSize: 20,
     fontFamily: "Baloo2_600SemiBold",
-    color: "#080C0C", // Story # text color
+    color: "#080C0C",
   },
   addBtn: {
     position: "absolute",

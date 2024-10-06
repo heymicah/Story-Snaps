@@ -69,7 +69,7 @@ const GenerateScreen = ({ route, navigation }) => {
   const handleSavePage = async () => {
     try {
       const newPage = { text: text, image: photo };
-      const updatedStoryObj = await addPageToStory(storyObj.id, newPage);
+      const updatedStoryObj = await addPageToStory(storyObj.id, newPage, endedStory);
       if (endedStory) {
         setStoryEnding(storyObj.id);
       }

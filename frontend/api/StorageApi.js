@@ -1,4 +1,5 @@
 import * as FileSystem from "expo-file-system";
+import eventEmitter from '../eventEmitter';
 
 const saveImage = async (base64Image, filename) => {
   const dirUri = `${FileSystem.documentDirectory}SS_Images/`;
@@ -45,7 +46,6 @@ const saveStoryWithImages = async (story) => {
     ...story,
     pages: updatedPages,
   };
-
   return updatedStory;
 };
 
@@ -56,7 +56,7 @@ export const saveAllStories = async (stories) => {
   const jsonString = JSON.stringify(updatedStories);
   const jsonUri = `${FileSystem.documentDirectory}stories.json`;
   await FileSystem.writeAsStringAsync(jsonUri, jsonString);
-
+  eventEmitter.emit('storageUpdated');
   console.log("All stories and images saved");
 };
 
@@ -94,6 +94,8 @@ export const addPageToStory = async (storyId, newPage) => {
   } catch (error) {
     console.error("Error adding page to story:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -121,6 +123,8 @@ export const updateStoryTitle = async (storyId, newTitle) => {
   } catch (error) {
     console.error("Error updating story title:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -158,6 +162,8 @@ export const createNewStory = async () => {
   } catch (error) {
     console.error("Error creating new story:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 

@@ -12,6 +12,7 @@
     "@expo-google-fonts/dev": "^0.2.3",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
+    "eventemitter3": "^5.0.1",
     "expo": "~51.0.28",
     "expo-camera": "~15.0.16",
     "expo-file-system": "~17.0.1",

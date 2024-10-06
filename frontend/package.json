@@ -9,6 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/baloo-2": "^0.2.3",
+    "@expo-google-fonts/comic-neue": "^0.2.3",
     "@expo-google-fonts/dev": "^0.2.3",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",

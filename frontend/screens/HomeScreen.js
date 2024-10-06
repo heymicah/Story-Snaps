@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute", // Make it absolute for the header to overlay the scroll
     top: 0, // Align to the top of the screen
-    zIndex: 10, // Ensure the header is above the scroll view
+    zIndex: 0, // Ensure the header is above the scroll view
   },
   headerText: {
     fontSize: 40,

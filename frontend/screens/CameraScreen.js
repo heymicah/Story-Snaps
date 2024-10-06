@@ -1,9 +1,9 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-// import * as MediaLibrary from 'expo-media-library'; // Import MediaLibrary
-import * as FileSystem from 'expo-file-system';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import * as FileSystem from "expo-file-system";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function App() {
   const navigation = useNavigation(); // Get navigation object
@@ -11,7 +11,17 @@ export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null); // Create a ref for the camera
   const [base64Image, setBase64Image] = useState(null);
-  // const [cameraRef, setCameraRef] = useState(null);
+  async function lockToLandscape() {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.LANDSCAPE
+    );
+  }
+  useEffect(() => {
+    lockToLandscape();
+    return () => {
+      ScreenOrientation.unlockAsync(); // Unlock when component unmounts
+    };
+  }, []);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -30,15 +40,11 @@ export default function App() {
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  }
-
   const takePicture = async () => {
+    // still need to force picture to be in landscape mode
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync(); // Capture the photo
 
-     
       // Define the directory and file path
       const directory = `${FileSystem.documentDirectory}photos/`;
       const filePath = `${directory}${Date.now()}.jpg`; // Use current timestamp as filename
@@ -61,7 +67,7 @@ export default function App() {
 
       setBase64Image(base64);
       // // console.log('Base64 Image:', base64);
-      navigation.navigate("Generate", { photo: base64});
+      navigation.navigate("Generate", { photo: base64 });
     }
   };
 
@@ -69,11 +75,8 @@ export default function App() {
     <View style={styles.container}>
       <CameraView style={styles.camera} ref={cameraRef} facing={facing}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={takePicture}>
-            <Text style={styles.text}>Take Picture</Text>
+            <Text style={styles.text}></Text>
           </TouchableOpacity>
         </View>
       </CameraView>
@@ -94,19 +97,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
+    position: "absolute",
+    right: 30,
+    top: "50%",
+    transform: [{ translateY: -35 }], // Half of the button height to center it vertically
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "transparent",
-    margin: 64,
   },
   button: {
-    flex: 1,
-    alignSelf: "flex-end",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.5,
+    elevation: 5,
   },
   text: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "white",
+    color: "#000000", // Changed to black for better visibility on white background
   },
 });

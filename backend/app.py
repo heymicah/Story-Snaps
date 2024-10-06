@@ -10,12 +10,10 @@ from vertexai.generative_models import (
     Part
 )
 from vertexai.vision_models import Image as VertexImage
-
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
 # Set up the Google Application Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./serviceAccountKey.json"
 
@@ -49,18 +47,18 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 
     # Create the prompt
     if(not end_story):
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story but do not end the story
-        and leave room for expansion.
+        prompt = f"""Look at this image and create a short story for kids that is both fun and educational. The story should incorporate realistic elements of math, science, or language arts in a way that teaches or reinforces real-world concepts. Ensure the educational content is accurate and grounded in real knowledge while still being engaging and creative. If the previous story segments exist, the new portion should continue with the same style and themes, keeping the educational focus clear but woven naturally into the narrative. Try not deviate too much from what is in the picture and try to make all educational portions relate to some part of the picture. The story should not be about the characters learning things, instead it should use things that the characters do to teach the reader educational concepts.
+        Your number one priority is to include explicit educational facts and details in the text of the response.
+        If a character utilizes knowledge of math, science, or history or learns anything about math, science, or history, you need to also state what specifically they learned/utilized in your response.
         
-        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
+        Leave the story at some sort of cliffhanger, without a solid end. Do not end it with "The End." Allow for continuations. Also, try not to deviate too much from what is given to you in the image. Lastly, try to make sure your response is in the range of 15 to 30 sentences.
+        {f"Here are the previous portions of the story. The new portion should continue with the same style and themes. Previous story: {previous_stories}" if previous_stories else ""}
         """
     else:
-        prompt = f"""Look at this image and create a short story for kids based on what you see. 
-        Be descriptive and creative.
-        The story should be a continuation of the following story and you should have an
-        ending. 
+        prompt = f"""Look at this image and create a short story for kids that is both fun and educational. The story should incorporate realistic elements of math, science, or language arts in a way that teaches or reinforces real-world concepts. Ensure the educational content is accurate and grounded in real knowledge while still being engaging and creative. If the previous story segments exist, the new portion should continue with the same style and themes, keeping the educational focus clear but woven naturally into the narrative. Try not deviate too much from what is in the picture and try to make all educational portions relate to some part of the picture. The story should not be about the characters learning things, instead it should use things that the characters do to teach the reader educational concepts. Also, try not to deviate too much from what is given to you in the image. Lastly, try to limit your response to 25 sentences max.
+        Your number one priority is to include explicit educational facts and details in the text of the response.
+        
+        You should provide a solid, satisfying ending to the story. Make sure the last words of the response are "The End."
 
         {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
         """
@@ -69,12 +67,15 @@ def generate_story_from_media(image_data, previous_stories, end_story):
     try:
         # Load the image
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
+        image_part = Part.from_data(image_data, mime_type="image/jpeg")
 
+        # Generate content with both the prompt and the image
         # Generate content with both the prompt and the image
         response = model.generate_content(
             [prompt, image_part],
             generation_config=generation_config
         )
+        
         
         print(f"\nGenerated Output:\n{response.text}")
         return response.text
@@ -86,6 +87,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 def home():
     return 'Hello, World!'
 
+@app.route('/generate', methods=["POST"])
 @app.route('/generate', methods=["POST"])
 def generate():
     # Load data

@@ -69,7 +69,7 @@ export const saveAllStories = async (stories) => {
   console.log("All stories and images saved");
 };
 
-export const addPageToStory = async (storyId, newPage) => {
+export const addPageToStory = async (storyId, newPage, isLastPage) => {
   try {
     // Read the current stories
     const jsonUri = `${FileSystem.documentDirectory}stories.json`;
@@ -94,6 +94,10 @@ export const addPageToStory = async (storyId, newPage) => {
       imagePath: imageUri,
     };
     stories[storyIndex].pages.push(updatedPage);
+
+    if (isLastPage) {
+      stories[storyIndex].isFinished = true;
+    }
 
     // Save the updated stories
     await FileSystem.writeAsStringAsync(jsonUri, JSON.stringify(stories));

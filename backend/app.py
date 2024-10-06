@@ -54,7 +54,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             Previous story: {previous_stories}
 
             Guidelines:
-            - Write 100-150 words that wrap up the story with a satisfying ending.
+            - Write 75-125 words that wrap up the story with a satisfying ending.
             - Incorporate elements from the final image into the conclusion.
             - Maintain consistency with existing story elements and characters.
             - Resolve the main conflict or challenge introduced in the story.
@@ -91,7 +91,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             Previous story: {previous_stories}
 
             Guidelines:
-            - Write 75-150 words that naturally continue the existing story.
+            - Write 75-100 words that naturally continue the existing story.
             - Incorporate elements from the new image seamlessly into the narrative.
             - Maintain consistency with existing story elements and characters.
             - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
@@ -107,7 +107,7 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             prompt = """
             You are a creative storyteller for children aged 6-8. Create an engaging opening chapter for a new story based on the image provided. Guidelines:
 
-            - Write 100-125 words.
+            - Write 75-100 words.
             - Describe and incorporate key elements from the image into your story.
             - Introduce main characters and set up an interesting scenario.
             - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.

@@ -16,7 +16,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
 import { generateStory } from "../api/VisionApi";
-import { addPageToStory } from "../api/StorageApi";
+import { addPageToStory, setStoryEnding } from "../api/StorageApi";
 import * as ScreenOrientation from "expo-screen-orientation";
 
 const GenerateScreen = ({ route, navigation }) => {
@@ -32,6 +32,7 @@ const GenerateScreen = ({ route, navigation }) => {
   const [isEnding, setIsEnding] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [generatedOnce, setGeneratedOnce] = useState(false);
+  const [endedStory, setEndedStory] = useState(false);
 
   async function lockToLandscape() {
     await ScreenOrientation.lockAsync(
@@ -62,12 +63,16 @@ const GenerateScreen = ({ route, navigation }) => {
     } finally {
       setIsLoading(false);
     }
+    setEndedStory(isEnding);
   };
 
   const handleSavePage = async () => {
     try {
       const newPage = { text: text, image: photo };
       const updatedStoryObj = await addPageToStory(storyObj.id, newPage);
+      if (endedStory) {
+        setStoryEnding(storyObj.id);
+      }
       navigation.navigate("Story", { storyObj: updatedStoryObj });
     } catch (error) {
       console.error("Error saving page:", error);

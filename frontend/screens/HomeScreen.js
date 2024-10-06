@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { getAllStories } from "../api/StorageApi";
 import {
   View,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Animated,
 } from "react-native";
 import {
   useFonts,
@@ -16,7 +17,6 @@ import {
   Baloo2_600SemiBold,
   Baloo2_700Bold,
 } from '@expo-google-fonts/baloo-2';
-
 
 const { width: screenWidth } = Dimensions.get("window");
 const stories = getAllStories();
@@ -27,6 +27,9 @@ const HomeScreen = ({ navigation }) => {
     Baloo2_600SemiBold,
     Baloo2_700Bold,
   });
+
+  // Create a ref for the scroll offset
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const renderStoryPreview = (story) => {
     return (
@@ -52,12 +55,33 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      {/* Animated Header */}
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [0, -100], // Adjust the output range as needed
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         <Text style={styles.headerText}>Story Snaps</Text>
-      </View>
+      </Animated.View>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true },
+        )}
+        scrollEventThrottle={16}
       >
         {stories.map((story) => renderStoryPreview(story))}
       </ScrollView>
@@ -82,6 +106,9 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Adjust this value based on your device's status bar height
     paddingBottom: 15,
     alignItems: "center",
+    position: "absolute", // Make it absolute for the header to overlay the scroll
+    top: 0, // Align to the top of the screen
+    zIndex: 1, // Ensure the header is above the scroll view
   },
   headerText: {
     fontSize: 40,
@@ -90,6 +117,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginTop: 100, // Add margin top to account for the header height
   },
   scrollViewContent: {
     paddingTop: 20,

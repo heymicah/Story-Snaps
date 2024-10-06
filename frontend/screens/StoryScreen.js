@@ -14,7 +14,7 @@ import {
   Baloo2_400Regular,
   Baloo2_600SemiBold,
   Baloo2_700Bold,
-} from '@expo-google-fonts/baloo-2';
+} from "@expo-google-fonts/baloo-2";
 import PagerView from "react-native-pager-view";
 import { updateStoryTitle, deleteStory } from "../api/StorageApi";
 import eventEmitter from "../eventEmitter";
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    aspectRatio: 16 / 9, // Adjust this ratio based on your image's aspect ratio
+    aspectRatio: 4 / 3, // Adjust this ratio based on your image's aspect ratio
     alignItems: "center",
     justifyContent: "flex-start",
     overflow: "hidden",

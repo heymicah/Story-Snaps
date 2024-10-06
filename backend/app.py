@@ -142,11 +142,6 @@ def generate_story_from_media(image_data, previous_stories, end_story):
         print(f"Error during content generation: {str(e)}")
         return None
 
-@app.route('/')
-def home():
-    return 'Hello, World!'
-
-@app.route('/generate', methods=["POST"])
 @app.route('/generate', methods=["POST"])
 def generate():
     # Load data

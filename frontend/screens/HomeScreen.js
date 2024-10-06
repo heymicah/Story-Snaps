@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#3FA7D6",
     paddingTop: 35, // Adjust this value based on your device's status bar height
-    paddingBottom: 15,
+    paddingBottom: 10,
     alignItems: "center",
     position: "absolute", // Make it absolute for the header to overlay the scroll
     top: 0, // Align to the top of the screen

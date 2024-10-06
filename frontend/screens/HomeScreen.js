@@ -9,6 +9,7 @@ import {
   Animated,
   Image,
   Dimensions,
+  ScrollView, // Ensure ScrollView is imported
 } from "react-native";
 import {
   useFonts,
@@ -27,6 +28,7 @@ const HomeScreen = ({ navigation }) => {
     Baloo2_700Bold,
   });
 
+  // Create a ref for the scroll offset
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const renderStoryPreview = (story) => {
@@ -42,6 +44,7 @@ const HomeScreen = ({ navigation }) => {
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
+          {/* Rounded container for the text */}
           <View style={styles.textContainer}>
             <Text style={styles.storyTitle}>{story.title}</Text>
           </View>
@@ -50,24 +53,41 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  // Create an Animated ScrollView
+  const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      {/* Animated Header */}
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [0, -100], // Adjust the output range as needed
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         <Text style={styles.headerText}>Story Snaps</Text>
-      </View>
-      <Animated.ScrollView
+      </Animated.View>
+      <AnimatedScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false } // Use native driver set to false for compatibility
+          { useNativeDriver: true },
         )}
         scrollEventThrottle={16}
       >
-        {/* Padding at the top to make space for the header */}
-        <View style={{ paddingTop: 100 }} />
         {stories.map((story) => renderStoryPreview(story))}
-      </Animated.ScrollView>
+      </AnimatedScrollView>
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => navigation.navigate("Story", { storyObj: {} })}
@@ -86,10 +106,12 @@ const styles = StyleSheet.create({
   headerContainer: {
     width: "100%",
     backgroundColor: "#3FA7D6",
-    paddingTop: 50,
-    paddingBottom: 15,
+    paddingTop: 40, // Adjust this value based on device's status bar height
+    paddingBottom: 0,
     alignItems: "center",
-    zIndex: 1, // Ensure it stays on top
+    position: "absolute", // Make it absolute for the header to overlay the scroll
+    top: 0, // Align to the top of the screen
+    zIndex: 0, // Ensure the header is above the scroll view
   },
   headerText: {
     fontSize: 40,
@@ -98,8 +120,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginTop: 100, // Add margin top to account for the header height
   },
   scrollViewContent: {
+    paddingTop: 20,
     paddingHorizontal: 20,
   },
   storyItem: {
@@ -122,7 +146,7 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     borderRadius: 10,
     overflow: "hidden",
-    position: "relative",
+    position: "relative", // Needed for absolute positioning of text
   },
   image: {
     width: "100%",
@@ -130,18 +154,18 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   textContainer: {
-    position: "absolute",
-    bottom: 10,
-    left: 10,
-    backgroundColor: "#3FA7D6",
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 20,
+    position: "absolute", // To overlay the text container on the image
+    bottom: 10, // Adjust this value to control vertical placement
+    left: 10, // Adjust this value to control horizontal placement
+    backgroundColor: "#3FA7D6", // Solid color for the rounded container
+    paddingHorizontal: 15, // Add horizontal padding inside the container
+    paddingVertical: 5, // Add vertical padding inside the container
+    borderRadius: 20, // Rounded corners for the container
   },
   storyTitle: {
     fontSize: 20,
     fontFamily: "Baloo2_600SemiBold",
-    color: "#080C0C",
+    color: "#080C0C", // Story # text color
   },
   addBtn: {
     position: "absolute",

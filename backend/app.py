@@ -44,28 +44,87 @@ def generate_story_from_media(image_data, previous_stories, end_story):
         candidate_count=1,
         max_output_tokens=2048,
     )
-
+    print(previous_stories)
     # Create the prompt
-    if(not end_story):
-        prompt = f"""Look at this image and create a short story for kids that is both fun and educational. The story should incorporate realistic elements of math, science, or language arts in a way that teaches or reinforces real-world concepts. Ensure the educational content is accurate and grounded in real knowledge while still being engaging and creative. If the previous story segments exist, the new portion should continue with the same style and themes, keeping the educational focus clear but woven naturally into the narrative. Try not deviate too much from what is in the picture and try to make all educational portions relate to some part of the picture. The story should not be about the characters learning things, instead it should use things that the characters do to teach the reader educational concepts.
-        Your number one priority is to include explicit educational facts and details in the text of the response.
-        If a character utilizes knowledge of math, science, or history or learns anything about math, science, or history, you need to also state what specifically they learned/utilized in your response.
-        
-        Leave the story at some sort of cliffhanger, without a solid end. Do not end it with "The End." Allow for continuations. Also, try not to deviate too much from what is given to you in the image. Lastly, try to make sure your response is in the range of 15 to 30 sentences.
-        {f"Here are the previous portions of the story. The new portion should continue with the same style and themes. Previous story: {previous_stories}" if previous_stories else ""}
-        """
-    else:
-        prompt = f"""Look at this image and create a short story for kids that is both fun and educational. The story should incorporate realistic elements of math, science, or language arts in a way that teaches or reinforces real-world concepts. Ensure the educational content is accurate and grounded in real knowledge while still being engaging and creative. If the previous story segments exist, the new portion should continue with the same style and themes, keeping the educational focus clear but woven naturally into the narrative. Try not deviate too much from what is in the picture and try to make all educational portions relate to some part of the picture. The story should not be about the characters learning things, instead it should use things that the characters do to teach the reader educational concepts. Also, try not to deviate too much from what is given to you in the image. Lastly, try to limit your response to 25 sentences max.
-        Your number one priority is to include explicit educational facts and details in the text of the response.
-        
-        You should provide a solid, satisfying ending to the story. Make sure the last words of the response are "The End."
+    if(end_story):
+        if(previous_stories):
+            prompt = f"""
+            You are a creative storyteller for children aged 6-8. Conclude an existing story based on the final image provided and the following context:
 
-        {f"Here are the previous portions of the story. The story you generate should be a continuation of this: {previous_stories}" if previous_stories else ""}
-        """
+            Previous story: {previous_stories}
+
+            Guidelines:
+            - Write 100-150 words that wrap up the story with a satisfying ending.
+            - Incorporate elements from the final image into the conclusion.
+            - Maintain consistency with existing story elements and characters.
+            - Resolve the main conflict or challenge introduced in the story.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Provide a clear ending that ties up loose ends.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, conclude the story based on the final image and these guidelines.
+            """
+        else:
+            prompt = """
+            You are a creative storyteller for children aged 6-8. Create a complete short story based on the single image provided. Guidelines:
+
+            - Write a 100-150 word story with a clear beginning, middle, and end.
+            - Describe and incorporate key elements from the image into your story.
+            - Introduce characters, set up a scenario, and provide a satisfying conclusion.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Ensure the story has a complete arc with a resolution.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, create a complete short story based on the image and these guidelines.
+            """
+    else:
+        if(previous_stories):
+            prompt = f"""
+            You are a creative storyteller for children aged 6-8. Continue an existing story based on the new image provided and the following context:
+
+            Previous story: {previous_stories}
+
+            Guidelines:
+            - Write 75-150 words that naturally continue the existing story.
+            - Incorporate elements from the new image seamlessly into the narrative.
+            - Maintain consistency with existing story elements and characters.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Leave room for future continuation of the story.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, continue the story based on the new image and these guidelines.
+            """
+        else:
+            prompt = """
+            You are a creative storyteller for children aged 6-8. Create an engaging opening chapter for a new story based on the image provided. Guidelines:
+
+            - Write 100-125 words.
+            - Describe and incorporate key elements from the image into your story.
+            - Introduce main characters and set up an interesting scenario.
+            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
+            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Use language and vocabulary suitable for 6-8 year olds.
+            - Keep the tone positive, engaging, and mildly educational.
+            - Leave room for future continuation of the story.
+            - Avoid inappropriate content, complex language, or scary themes.
+
+            Now, create the opening chapter of the story based on the image and these guidelines.
+            """
 
     # Send request to the model
     try:
         # Load the image
+
+        print(prompt)
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
 

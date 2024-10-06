@@ -15,6 +15,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
 import PagerView from "react-native-pager-view";
+import { updateStoryTitle } from "../api/StorageApi";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -22,7 +23,7 @@ const StoryScreen = ({ route, navigation }) => {
     Roboto_700Bold,
   });
   const { storyObj } = route.params;
-  const isNewStory = !storyObj || Object.keys(storyObj).length === 0;
+  const isNewStory = !storyObj || storyObj.pages.length === 0;
   const [title, setTitle] = useState(isNewStory ? "New Story" : storyObj.title);
   const [isEditing, setIsEditing] = useState(isNewStory);
 
@@ -32,19 +33,21 @@ const StoryScreen = ({ route, navigation }) => {
 
   const handleTitleChange = (newTitle) => {
     setTitle(newTitle);
+    updateStoryTitle(storyObj.id, newTitle);
   };
 
   const handleTitleSubmit = () => {
     setIsEditing(false);
   };
 
-  const renderStoryView = (page) => {
+  const renderStoryView = (page, index) => {
     return (
-      <View style={styles.page} key={page.pageNum}>
+      <View style={styles.page} key={index + 1}>
         <View style={styles.imageContainer}>
           <Image
             style={styles.image}
-            source={require("../assets/placeholder.png")}
+            source={{ uri: page.imagePath }} // Set base64-encoded image
+            defaultSource={require("../assets/placeholder.png")}
           />
         </View>
         <ScrollView style={styles.scrollView}>
@@ -85,7 +88,7 @@ const StoryScreen = ({ route, navigation }) => {
 
       <TouchableOpacity
         style={styles.addBtn}
-        onPress={() => navigation.navigate("Camera")}
+        onPress={() => navigation.navigate("Camera", { storyObj: storyObj })}
       >
         <Text style={styles.addBtnText}>+</Text>
       </TouchableOpacity>
@@ -106,7 +109,7 @@ const StoryScreen = ({ route, navigation }) => {
         </View>
       ) : (
         <PagerView style={styles.pagerView} initialPage={0}>
-          {storyObj.pages.map((page) => renderStoryView(page))}
+          {storyObj.pages.map((page, index) => renderStoryView(page, index))}
         </PagerView>
       )}
     </View>

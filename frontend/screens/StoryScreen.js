@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
     includeFontPadding: false,
-    lineHeight: 5,
+    lineHeight: 50,
   },
   backBtn: {
     position: "absolute",

@@ -14,10 +14,10 @@ import {
   Baloo2_400Regular,
   Baloo2_600SemiBold,
   Baloo2_700Bold,
-} from '@expo-google-fonts/baloo-2';
+} from "@expo-google-fonts/baloo-2";
 import PagerView from "react-native-pager-view";
 import { updateStoryTitle, deleteStory } from "../api/StorageApi";
-import eventEmitter from '../eventEmitter';
+import eventEmitter from "../eventEmitter";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -34,18 +34,17 @@ const StoryScreen = ({ route, navigation }) => {
     setIsEditing(true);
   };
 
-  const handleTitleChange = async (newTitle) => {
+  const handleTitleChange = (newTitle) => {
     setTitle(newTitle);
-    try {
-      const updatedStory = await updateStoryTitle(storyObj.id, newTitle);
-      eventEmitter.emit('storyUpdated', updatedStory);
-    } catch (error) {
-      console.error('Error updating story title:', error);
-    }
   };
 
-  const handleTitleSubmit = () => {
-    updateStoryTitle(storyObj.id, title);
+  const handleTitleSubmit = async () => {
+    try {
+      const updatedStory = await updateStoryTitle(storyObj.id, title);
+      eventEmitter.emit("storyUpdated", updatedStory);
+    } catch (error) {
+      console.error("Error updating story title:", error);
+    }
     setIsEditing(false);
   };
 

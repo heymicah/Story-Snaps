@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
   Switch,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import {
   useFonts,
@@ -71,7 +71,11 @@ const GenerateScreen = ({ route, navigation }) => {
   const handleSavePage = async () => {
     try {
       const newPage = { text: text, image: photo };
-      const updatedStoryObj = await addPageToStory(storyObj.id, newPage, endedStory);
+      const updatedStoryObj = await addPageToStory(
+        storyObj.id,
+        newPage,
+        endedStory
+      );
       if (endedStory) {
         setStoryEnding(storyObj.id);
       }
@@ -228,14 +232,14 @@ const styles = StyleSheet.create({
     color: "#080C0C",
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
 

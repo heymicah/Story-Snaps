@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   pageText: {
     marginTop: 10,
     fontSize: 16,
-    fontFamily: "Roboto_400Regular",
+    fontFamily: "Baloo2_600SemiBold",
     margin: 10,
     color: "#080C0C",
   },

@@ -22,13 +22,14 @@ project_id = "storysnaps"
 region = "us-central1"
 
 # Model ID for Vertex AI
-MODEL_ID = "gemini-1.0-pro-vision"  # Changed to vision model
+MODEL_ID = "gemini-1.5-flash-002"  # Changed to vision model
 
 # Initialize Vertex AI
 vertexai.init(project=project_id, location=region)
 
 previous_stories = ""
 end_story = False
+prompt = ""
 
 def generate_story_from_media(image_data, previous_stories, end_story):
     """Function to send media data (image) to a Vertex AI model and get predictions."""
@@ -44,103 +45,101 @@ def generate_story_from_media(image_data, previous_stories, end_story):
         candidate_count=1,
         max_output_tokens=2048,
     )
-    print(previous_stories)
     # Create the prompt
     if(end_story):
-        if(previous_stories):
+        if(previous_stories): # conclude existing story
             prompt = f"""
-            You are a creative storyteller for children aged 6-8. Conclude an existing story based on the final image provided and the following context:
+            You are a creative storyteller for children aged 6-8. Conclude an existing story based on the following information:
 
-            Previous story: {previous_stories}
+            Previous story context: {previous_stories}
 
             Guidelines:
             - Write 75-125 words that wrap up the story with a satisfying ending.
             - Incorporate elements from the final image into the conclusion.
+            - Ensure that you incorporate every important element of the new image into the story.
             - Maintain consistency with existing story elements and characters.
             - Resolve the main conflict or challenge introduced in the story.
-            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
-            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
-            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
+            - Use ONLY characters, settings, and objects visible in the image provided and in the previous story context.
+            - Do not introduce any elements not present in the image
+            - Ensure that all grammar and spelling is correct
+            - The story must revolve around these specific elements.
+            - Seamlessly incorporate one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be something that is commonly taught to children.
+            - Avoid using any specific measurements or technical details unless they are common knowledge or used for math.
             - Use language and vocabulary suitable for 6-8 year olds.
             - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
-            - Do not include any separate explanations or notes about the educational content at the end of the story.
-            - Keep the tone positive, engaging, and mildly educational.
+            - Ensure that the fact is actually accurate
+            - Provide a clear ending that ties up any loose ends
 
 
-            Now, conclude the story based on the final image and these guidelines.
+            Now, conclude the story based on these guidelines.
             """
-        else:
+        else: # one complete short story
             prompt = """
-            You are a creative storyteller for children aged 6-8. Create a complete short story based on the single image provided. Guidelines:
-
-            - Write a 100-150 word story with a clear beginning, middle, and end.
-            - Describe and incorporate key elements from the image into your story.
-            - Introduce characters and set up an interesting scenario.
-            - Seamlessly weave one age-appropriate fact related to math, science, history, or literature into the story's plot or dialogue. The fact should be an integral part of the story, not just mentioned in passing.
-            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
-            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
+            You are a creative storyteller for children aged 6-8. Create a short, engaging, and complete story based on the image provided.
+            - Write between 125-175 words.
+            - Use ONLY characters, settings, and objects visible in the image provided.
+            - Do not introduce any elements not present in the image
+            - Ensure that all grammar and spelling is correct
+            - The story must revolve around these specific elements.
+            - Seamlessly incorporate one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be something that is commonly taught to children.
+            - Avoid using any specific measurements or technical details unless they are common knowledge or used for math.
             - Use language and vocabulary suitable for 6-8 year olds.
             - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
-            - Do not include any separate explanations or notes about the educational content at the end of the story.
-            - Ensure the story has a complete arc with a resolution.
-            - Avoid inappropriate content, complex language, or scary themes.
-            - Keep the tone positive, engaging, and mildly educational.
+            - Ensure that the fact is actually accurate
 
-
-            Now, create a complete short story based on the image and these guidelines.
+            Now, create a complete short story that closely matches what you see in the images while subtly incorporating an educational fact."
             """
     else:
-        if(previous_stories):
+        if(previous_stories): # continue an existing story
             prompt = f"""
-            You are a creative storyteller for children aged 6-8. Continue an existing story based STRICTLY on the new image provided and the following context:
+            You are a creative storyteller for children aged 6-8. Continue an existing story based on attached image and the following information:
 
-            Previous story: {previous_stories}
+            Previous story context: {previous_stories}
 
             Guidelines:
             - Write 75-100 words that naturally continue the existing story.
-            - Incorporate elements from the new image seamlessly into the narrative.
             - Maintain consistency with existing story elements and characters.
-            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
-            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
-            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
+            - Incorporate elements from the new image seamlessly into the narrative.
+            - Ensure that you incorporate important element of the new image into the story.
+            - Do not introduce any elements not present in the image or previous story context
+            - Ensure that all grammar and spelling is correct
+            - The story must revolve around these specific elements.
+            - Seamlessly incorporate one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be something that is commonly taught to children.
+            - Avoid using any specific measurements or technical details unless they are common knowledge or used for math.
             - Use language and vocabulary suitable for 6-8 year olds.
             - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
-            - Do not include any separate explanations or notes about the educational content at the end of the story.
-            - End the story on a cliffhanger with several possible ways to develop in the future.
-            - Keep the tone positive, engaging, and mildly educational.
+            - Make sure that there is room for further development of the story.
 
-
-            Now, continue the story based on the new image and these guidelines.
+            Now, continue the story based on these guidelines.
             """
-        else:
+        else: # start a story
             prompt = """
-            You are a creative storyteller for children aged 6-8. Create an engaging opening chapter for a new story based on the image provided. Guidelines:
-
-            - Write 75-100 words.
-            - Describe and incorporate key elements from the image into your story.
-            - Introduce main characters and set up an interesting scenario.
-            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
-            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
-            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
+            You are a creative storyteller for children aged 6-8. Create the start of a story based on the image provided.
+            - Write 75-100 words that start a new story.
+            - Use ONLY characters, settings, and objects visible in the image provided.
+            - Do not introduce any elements not present in the image
+            - Ensure that all grammar and spelling is correct
+            - The story must revolve around these specific elements.
+            - Seamlessly incorporate one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be something that is commonly taught to children.
+            - Avoid using any specific measurements or technical details unless they are common knowledge or used for math.
             - Use language and vocabulary suitable for 6-8 year olds.
             - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
-            - Do not include any separate explanations or notes about the educational content at the end of the story.
-            - End the story on a cliffhanger with several possible ways to develop in the future.
-            - Keep the tone positive, engaging, and mildly educational.
+            - Make sure that there is room for further development of the story.
+            - Ensure that the fact is actually accurate
+            - Introduce main characters and set up an interesting scenario
 
-
-            Now, create the opening chapter of the story based on the image and these guidelines.
+            Now, write the opening of a story based on the guidelines above and image provided.
             """
 
     # Send request to the model
     try:
         # Load the image
-
         print(prompt)
+
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
         image_part = Part.from_data(image_data, mime_type="image/jpeg")
 

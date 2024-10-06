@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   addBtnText: {
     fontSize: 18,
-    fontFamily: "Baloo2_700Bold",
+    fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C",
   },
 });

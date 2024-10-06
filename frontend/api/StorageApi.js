@@ -217,6 +217,8 @@ export const setStoryEnding = async (storyId) => {
   } catch (error) {
     console.error("Error setting story ending:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -251,5 +253,7 @@ export const deleteStory = async (storyId) => {
       success: false,
       message: `Error deleting story: ${error.message}`,
     };
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };

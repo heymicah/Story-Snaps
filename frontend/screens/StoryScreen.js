@@ -16,7 +16,7 @@ import {
 } from "@expo-google-fonts/dev";
 import PagerView from "react-native-pager-view";
 import { updateStoryTitle, deleteStory } from "../api/StorageApi";
-import eventEmitter from '../eventEmitter';
+import eventEmitter from "../eventEmitter";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -25,25 +25,26 @@ const StoryScreen = ({ route, navigation }) => {
   });
   const { storyObj } = route.params;
   const isNewStory = !storyObj || storyObj.pages.length === 0;
-  const [title, setTitle] = useState(isNewStory && storyObj.title === "New Story" ? "New Story" : storyObj.title);
-  const [isEditing, setIsEditing] = useState(isNewStory);
+  const [title, setTitle] = useState(
+    isNewStory && storyObj.title === "New Story" ? "New Story" : storyObj.title
+  );
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleEditPress = () => {
     setIsEditing(true);
   };
 
-  const handleTitleChange = async (newTitle) => {
+  const handleTitleChange = (newTitle) => {
     setTitle(newTitle);
-    try {
-      const updatedStory = await updateStoryTitle(storyObj.id, newTitle);
-      eventEmitter.emit('storyUpdated', updatedStory);
-    } catch (error) {
-      console.error('Error updating story title:', error);
-    }
   };
 
-  const handleTitleSubmit = () => {
-    updateStoryTitle(storyObj.id, title);
+  const handleTitleSubmit = async () => {
+    try {
+      const updatedStory = await updateStoryTitle(storyObj.id, title);
+      eventEmitter.emit("storyUpdated", updatedStory);
+    } catch (error) {
+      console.error("Error updating story title:", error);
+    }
     setIsEditing(false);
   };
 

@@ -58,12 +58,15 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             - Incorporate elements from the final image into the conclusion.
             - Maintain consistency with existing story elements and characters.
             - Resolve the main conflict or challenge introduced in the story.
-            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
-            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
+            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
+            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
             - Use language and vocabulary suitable for 6-8 year olds.
-            - Keep the tone positive, engaging, and mildly educational.
-            - Provide a clear ending that ties up loose ends.
+            - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
+            - Do not include any separate explanations or notes about the educational content at the end of the story.
+            - Keep the tone positive, engaging, and mildly educational.
+
 
             Now, conclude the story based on the final image and these guidelines.
             """
@@ -73,20 +76,25 @@ def generate_story_from_media(image_data, previous_stories, end_story):
 
             - Write a 100-150 word story with a clear beginning, middle, and end.
             - Describe and incorporate key elements from the image into your story.
-            - Introduce characters, set up a scenario, and provide a satisfying conclusion.
-            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
-            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Introduce characters and set up an interesting scenario.
+            - Seamlessly weave one age-appropriate fact related to math, science, history, or literature into the story's plot or dialogue. The fact should be an integral part of the story, not just mentioned in passing.
+            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
+            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
             - Use language and vocabulary suitable for 6-8 year olds.
-            - Keep the tone positive, engaging, and mildly educational.
+            - Keep the tone positive, engaging, and subtly educational.
+            - Avoid inappropriate content, complex language, or scary themes.
+            - Do not include any separate explanations or notes about the educational content at the end of the story.
             - Ensure the story has a complete arc with a resolution.
             - Avoid inappropriate content, complex language, or scary themes.
+            - Keep the tone positive, engaging, and mildly educational.
+
 
             Now, create a complete short story based on the image and these guidelines.
             """
     else:
         if(previous_stories):
             prompt = f"""
-            You are a creative storyteller for children aged 6-8. Continue an existing story based on the new image provided and the following context:
+            You are a creative storyteller for children aged 6-8. Continue an existing story based STRICTLY on the new image provided and the following context:
 
             Previous story: {previous_stories}
 
@@ -94,12 +102,16 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             - Write 75-100 words that naturally continue the existing story.
             - Incorporate elements from the new image seamlessly into the narrative.
             - Maintain consistency with existing story elements and characters.
-            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
-            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
+            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
+            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
             - Use language and vocabulary suitable for 6-8 year olds.
-            - Keep the tone positive, engaging, and mildly educational.
-            - Leave room for future continuation of the story.
+            - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
+            - Do not include any separate explanations or notes about the educational content at the end of the story.
+            - End the story on a cliffhanger with several possible ways to develop in the future.
+            - Keep the tone positive, engaging, and mildly educational.
+
 
             Now, continue the story based on the new image and these guidelines.
             """
@@ -110,12 +122,16 @@ def generate_story_from_media(image_data, previous_stories, end_story):
             - Write 75-100 words.
             - Describe and incorporate key elements from the image into your story.
             - Introduce main characters and set up an interesting scenario.
-            - Naturally weave in one age-appropriate fact related to math, science, or history that fits the context. Do not state the fact separately at the end.
-            - Use the characters' actions or dialogue to explain or demonstrate the fact within the story.
+            - Seamlessly weave one age-appropriate fact related to math, science, or history into the story's plot or dialogue. The fact should be an   integral part of the story, not just mentioned in passing.
+            - Use the characters' actions, thoughts, or dialogue to explain or demonstrate the fact within the story context.
+            - If introducing new terms or concepts, explain them naturally through the story's events or character interactions.
             - Use language and vocabulary suitable for 6-8 year olds.
-            - Keep the tone positive, engaging, and mildly educational.
-            - Leave room for future continuation of the story.
+            - Keep the tone positive, engaging, and subtly educational.
             - Avoid inappropriate content, complex language, or scary themes.
+            - Do not include any separate explanations or notes about the educational content at the end of the story.
+            - End the story on a cliffhanger with several possible ways to develop in the future.
+            - Keep the tone positive, engaging, and mildly educational.
+
 
             Now, create the opening chapter of the story based on the image and these guidelines.
             """

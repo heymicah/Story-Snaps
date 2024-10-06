@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
+    fontFamily: "Baloo2_600SemiBold",
     fontWeight: "bold",
     color: "#000000", // Changed to black for better visibility on white background
   },

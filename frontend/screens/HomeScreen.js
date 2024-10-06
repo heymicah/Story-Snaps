@@ -1,52 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react"; // Add useRef to the imports
 import { getAllStories, createNewStory } from "../api/StorageApi";
 import eventEmitter from '../eventEmitter';
-
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Platform,
-  ScrollView,
+  Animated,
   Image,
   Dimensions,
 } from "react-native";
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from "@expo-google-fonts/dev";
+  Baloo2_400Regular,
+  Baloo2_600SemiBold,
+  Baloo2_700Bold,
+} from '@expo-google-fonts/baloo-2';
 
 const { width: screenWidth } = Dimensions.get("window");
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
+    Baloo2_400Regular,
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
   });
 
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const scrollY = useRef(new Animated.Value(0)).current; // Initialize scrollY here
 
   useEffect(() => {
     loadStories();
-  
+
     const storageUpdateListener = () => {
       loadStories();
     };
-  
+
     const storyUpdateListener = (updatedStory) => {
-      setStories(prevStories => 
-        prevStories.map(story => 
+      setStories((prevStories) =>
+        prevStories.map((story) =>
           story.id === updatedStory.id ? updatedStory : story
         )
       );
     };
-  
+
     eventEmitter.on('storageUpdated', storageUpdateListener);
     eventEmitter.on('storyUpdated', storyUpdateListener);
-  
+
     return () => {
       eventEmitter.off('storageUpdated', storageUpdateListener);
       eventEmitter.off('storyUpdated', storyUpdateListener);
@@ -88,12 +90,14 @@ const HomeScreen = ({ navigation }) => {
               story.pages.length > 0
                 ? { uri: story.pages[0].imagePath }
                 : require("../assets/placeholder.png")
-            } // adjust to reference the image in the story object instead of placeholder
+            }
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
+          <View style={styles.textContainer}>
+            <Text style={styles.storyTitle}>{story.title}</Text>
+          </View>
         </View>
-        <Text style={styles.storyTitle}>{story.title}</Text>
       </TouchableOpacity>
     );
   };
@@ -104,19 +108,39 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <Animated.View
+        style={[
+          styles.headerContainer,
+          {
+            transform: [
+              {
+                translateY: scrollY.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [0, -100],
+                  extrapolate: "clamp",
+                }),
+              },
+            ],
+          },
+        ]}
+      >
         <Text style={styles.headerText}>Story Snaps</Text>
-      </View>
-      <ScrollView
+      </Animated.View>
+      <Animated.ScrollView // Change to Animated.ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true },
+        )}
+        scrollEventThrottle={16}
       >
         {stories.length > 0 ? (
           stories.map((story) => renderStoryPreview(story))
         ) : (
           <Text>Create a Story to get started!</Text>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
       <TouchableOpacity style={styles.addBtn} onPress={handleNewStory}>
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
@@ -132,16 +156,20 @@ const styles = StyleSheet.create({
   headerContainer: {
     width: "100%",
     backgroundColor: "#3FA7D6",
-    paddingTop: 50, // Adjust this value based on your device's status bar height
-    paddingBottom: 15,
+    paddingTop: 40,
+    paddingBottom: 0,
     alignItems: "center",
+    position: "absolute",
+    top: 0,
   },
   headerText: {
     fontSize: 40,
+    fontFamily: "Baloo2_700Bold",
     color: "#080C0C",
   },
   scrollView: {
     flex: 1,
+    marginTop: 100,
   },
   scrollViewContent: {
     paddingTop: 20,
@@ -167,15 +195,25 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     borderRadius: 10,
     overflow: "hidden",
+    position: "relative",
   },
   image: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
   },
+  textContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    backgroundColor: "#3FA7D6",
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
   storyTitle: {
-    fontSize: 25,
-    fontFamily: "Roboto_400Regular",
+    fontSize: 20,
+    fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C",
   },
   addBtn: {
@@ -198,8 +236,8 @@ const styles = StyleSheet.create({
   },
   addBtnText: {
     fontSize: 18,
+    fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C",
-    fontFamily: "San Francisco",
   },
 });
 

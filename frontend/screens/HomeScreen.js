@@ -1,5 +1,5 @@
-import React from "react";
-import { getAllStories } from "../api/StorageApi";
+import React, { useState, useEffect } from "react";
+import { getAllStories, createNewStory } from "../api/StorageApi";
 import {
   View,
   Text,
@@ -25,6 +25,35 @@ const HomeScreen = ({ navigation }) => {
     Roboto_700Bold,
   });
 
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStories();
+  }, []);
+
+  const loadStories = async () => {
+    try {
+      const loadedStories = await getAllStories();
+      setStories(loadedStories);
+    } catch (error) {
+      console.error("Error loading stories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNewStory = async () => {
+    try {
+      const newStory = await createNewStory();
+      navigation.navigate("Story", { storyObj: newStory });
+      // Optionally, you can reload the stories list after creating a new story
+      loadStories();
+    } catch (error) {
+      console.error("Error creating new story:", error);
+    }
+  };
+
   const renderStoryPreview = (story) => {
     return (
       <TouchableOpacity
@@ -34,7 +63,11 @@ const HomeScreen = ({ navigation }) => {
       >
         <View style={styles.imageContainer}>
           <Image
-            source={require("../assets/placeholder.png")} // adjust to reference the image in the story object instead of placeholder
+            source={
+              story.pages.length > 0
+                ? { uri: story.pages[0].imagePath }
+                : require("../assets/placeholder.png")
+            } // adjust to reference the image in the story object instead of placeholder
             defaultSource={require("../assets/placeholder.png")}
             style={styles.image}
           />
@@ -43,6 +76,10 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  if (loading) {
+    return <Text>Loading stories...</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -53,12 +90,13 @@ const HomeScreen = ({ navigation }) => {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
-        {stories.map((story) => renderStoryPreview(story))}
+        {stories.length > 0 ? (
+          stories.map((story) => renderStoryPreview(story))
+        ) : (
+          <Text>Create a Story to get started!</Text>
+        )}
       </ScrollView>
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => navigation.navigate("Story", { storyObj: {} })}
-      >
+      <TouchableOpacity style={styles.addBtn} onPress={handleNewStory}>
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
     </View>
@@ -144,4 +182,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen
+export default HomeScreen;

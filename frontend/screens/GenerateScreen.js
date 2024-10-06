@@ -15,6 +15,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
 import { generateStory } from "../api/VisionApi";
+import { addPageToStory } from "../api/StorageApi";
 import * as ScreenOrientation from "expo-screen-orientation";
 
 const GenerateScreen = ({ route, navigation }) => {
@@ -24,26 +25,26 @@ const GenerateScreen = ({ route, navigation }) => {
   });
 
   const { photo } = route.params;
+  const { storyObj } = route.params;
 
   const [text, setText] = useState("");
   const [isEnding, setIsEnding] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [generatedOnce, setGeneratedOnce] = useState(false);
-  async function returnToPortrait() {
+
+  async function lockToLandscape() {
     await ScreenOrientation.lockAsync(
-      ScreenOrientation.OrientationLock.PORTRAIT
+      ScreenOrientation.OrientationLock.LANDSCAPE
     );
   }
-  useEffect(() => {
-    returnToPortrait();
-    return () => {
-      ScreenOrientation.unlockAsync(); // Unlock when component unmounts
-    };
-  }, []);
 
   const handleGenerateStory = async () => {
+    let prevStories = "";
+    storyObj.pages.forEach((page) => {
+      prevStories += "\n" + page.text;
+    });
     try {
-      const result = await generateStory(photo, isEnding);
+      const result = await generateStory(photo, isEnding, prevStories);
       if (result && result.story) {
         setText(result.story);
         if (!generatedOnce) setGeneratedOnce(true);
@@ -56,6 +57,17 @@ const GenerateScreen = ({ route, navigation }) => {
       setText(
         "An error occurred while generating the story. Please try again."
       );
+    }
+  };
+
+  const handleSavePage = async () => {
+    try {
+      const newPage = { text: text, image: photo };
+      const updatedStoryObj = await addPageToStory(storyObj.id, newPage);
+      navigation.navigate("Story", { storyObj: updatedStoryObj });
+    } catch (error) {
+      console.error("Error saving page:", error);
+      // Handle the error appropriately, e.g., show an error message to the user
     }
   };
 
@@ -74,7 +86,10 @@ const GenerateScreen = ({ route, navigation }) => {
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Camera")}
+            onPress={() => {
+              lockToLandscape();
+              navigation.navigate("Camera", { storyObj: storyObj });
+            }}
           >
             <Text style={styles.buttonText}>Retake Picture</Text>
           </TouchableOpacity>
@@ -105,7 +120,7 @@ const GenerateScreen = ({ route, navigation }) => {
           {generatedOnce && (
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("Story", { storyObj: {} })} // should also save the story to local storage
+              onPress={handleSavePage} // should also save the story to local storage
             >
               <Text style={styles.buttonText}>Save Story</Text>
             </TouchableOpacity>

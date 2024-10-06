@@ -2,11 +2,13 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useState, useRef, useEffect } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as FileSystem from "expo-file-system";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { useNavigation, useRoute } from "@react-navigation/native"; // Import useNavigation
 import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function App() {
   const navigation = useNavigation(); // Get navigation object
+  const route = useRoute();
+  const { storyObj } = route.params;
   const { facing, setFacing } = useState < CameraType > "back";
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null); // Create a ref for the camera
@@ -67,7 +69,8 @@ export default function App() {
 
       setBase64Image(base64);
       // // console.log('Base64 Image:', base64);
-      navigation.navigate("Generate", { photo: base64 });
+      await ScreenOrientation.unlockAsync();
+      navigation.navigate("Generate", { photo: base64, storyObj: storyObj });
     }
   };
 

@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   storyTitle: {
     fontSize: 20,
     fontFamily: "Baloo2_700Bold",
-    color: "#FFF", // White text for contrast
+    color: "#080C0C", // STory # text color
   },
   addBtn: {
     position: "absolute",

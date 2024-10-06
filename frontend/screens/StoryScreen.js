@@ -14,10 +14,10 @@ import {
   Baloo2_400Regular,
   Baloo2_600SemiBold,
   Baloo2_700Bold,
-} from '@expo-google-fonts/baloo-2';
+} from "@expo-google-fonts/baloo-2";
 import PagerView from "react-native-pager-view";
 import { updateStoryTitle, deleteStory } from "../api/StorageApi";
-import eventEmitter from '../eventEmitter';
+import eventEmitter from "../eventEmitter";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -27,25 +27,26 @@ const StoryScreen = ({ route, navigation }) => {
   });
   const { storyObj } = route.params;
   const isNewStory = !storyObj || storyObj.pages.length === 0;
-  const [title, setTitle] = useState(isNewStory && storyObj.title === "New Story" ? "New Story" : storyObj.title);
-  const [isEditing, setIsEditing] = useState(isNewStory);
+  const [title, setTitle] = useState(
+    isNewStory && storyObj.title === "New Story" ? "New Story" : storyObj.title
+  );
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleEditPress = () => {
     setIsEditing(true);
   };
 
-  const handleTitleChange = async (newTitle) => {
+  const handleTitleChange = (newTitle) => {
     setTitle(newTitle);
-    try {
-      const updatedStory = await updateStoryTitle(storyObj.id, newTitle);
-      eventEmitter.emit('storyUpdated', updatedStory);
-    } catch (error) {
-      console.error('Error updating story title:', error);
-    }
   };
 
-  const handleTitleSubmit = () => {
-    updateStoryTitle(storyObj.id, title);
+  const handleTitleSubmit = async () => {
+    try {
+      const updatedStory = await updateStoryTitle(storyObj.id, title);
+      eventEmitter.emit("storyUpdated", updatedStory);
+    } catch (error) {
+      console.error("Error updating story title:", error);
+    }
     setIsEditing(false);
   };
 
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    aspectRatio: 16 / 9, // Adjust this ratio based on your image's aspect ratio
+    aspectRatio: 4 / 3, // Adjust this ratio based on your image's aspect ratio
     alignItems: "center",
     justifyContent: "flex-start",
     overflow: "hidden",

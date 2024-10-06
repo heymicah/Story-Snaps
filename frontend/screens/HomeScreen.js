@@ -6,10 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  ScrollView,
+  Animated,
   Image,
   Dimensions,
-  Animated,
 } from "react-native";
 import {
   useFonts,
@@ -53,6 +52,9 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  // Create an Animated ScrollView
+  const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+
   return (
     <View style={styles.container}>
       {/* Animated Header */}
@@ -74,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.headerText}>Story Snaps</Text>
       </Animated.View>
-      <ScrollView
+      <AnimatedScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         onScroll={Animated.event(
@@ -84,7 +86,7 @@ const HomeScreen = ({ navigation }) => {
         scrollEventThrottle={16}
       >
         {stories.map((story) => renderStoryPreview(story))}
-      </ScrollView>
+      </AnimatedScrollView>
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => navigation.navigate("Story", { storyObj: {} })}

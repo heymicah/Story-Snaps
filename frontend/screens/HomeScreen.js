@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 40,
+    fontFamily: "Baloo2_700Bold",
     color: "#080C0C",
   },
   scrollView: {

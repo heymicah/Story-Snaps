@@ -1,4 +1,5 @@
 import * as FileSystem from "expo-file-system";
+import eventEmitter from '../eventEmitter';
 
 const generateUniqueId = (stories) => {
   const existingIds = new Set(stories.map((story) => parseInt(story.id)));
@@ -54,7 +55,6 @@ const saveStoryWithImages = async (story) => {
     ...story,
     pages: updatedPages,
   };
-
   return updatedStory;
 };
 
@@ -65,7 +65,7 @@ export const saveAllStories = async (stories) => {
   const jsonString = JSON.stringify(updatedStories);
   const jsonUri = `${FileSystem.documentDirectory}stories.json`;
   await FileSystem.writeAsStringAsync(jsonUri, jsonString);
-
+  eventEmitter.emit('storageUpdated');
   console.log("All stories and images saved");
 };
 
@@ -103,6 +103,8 @@ export const addPageToStory = async (storyId, newPage) => {
   } catch (error) {
     console.error("Error adding page to story:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -130,6 +132,8 @@ export const updateStoryTitle = async (storyId, newTitle) => {
   } catch (error) {
     console.error("Error updating story title:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -166,6 +170,8 @@ export const createNewStory = async () => {
   } catch (error) {
     console.error("Error creating new story:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -211,6 +217,8 @@ export const setStoryEnding = async (storyId) => {
   } catch (error) {
     console.error("Error setting story ending:", error);
     throw error;
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };
 
@@ -245,5 +253,7 @@ export const deleteStory = async (storyId) => {
       success: false,
       message: `Error deleting story: ${error.message}`,
     };
+  } finally {
+    eventEmitter.emit('storageUpdated');
   }
 };

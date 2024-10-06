@@ -76,7 +76,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} ref={cameraRef} facing={facing}>
+      <CameraView style={styles.camera} ref={cameraRef} facing={facing} responsiveOrientationWhenOrientationLocked>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={takePicture}>
             <Text style={styles.text}></Text>

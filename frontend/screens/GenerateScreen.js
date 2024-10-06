@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Switch,
+  ActivityIndicator
 } from "react-native";
 import {
   useFonts,
@@ -40,6 +41,7 @@ const GenerateScreen = ({ route, navigation }) => {
   }
 
   const handleGenerateStory = async () => {
+    setIsLoading(true);
     let prevStories = "";
     storyObj.pages.forEach((page) => {
       prevStories += "\n" + page.text;
@@ -58,6 +60,8 @@ const GenerateScreen = ({ route, navigation }) => {
       setText(
         "An error occurred while generating the story. Please try again."
       );
+    } finally {
+      setIsLoading(false);
     }
     setEndedStory(isEnding);
   };
@@ -75,6 +79,12 @@ const GenerateScreen = ({ route, navigation }) => {
       // Handle the error appropriately, e.g., show an error message to the user
     }
   };
+
+  const LoadingOverlay = () => (
+    <View style={styles.loadingOverlay}>
+      <ActivityIndicator size="large" color="#3FA7D6" />
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -132,6 +142,7 @@ const GenerateScreen = ({ route, navigation }) => {
           )}
         </View>
       </View>
+      {isLoading && <LoadingOverlay />}
     </View>
   );
 };
@@ -274,6 +285,16 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto_400Regular",
     marginRight: 10,
     color: "#080C0C",
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 

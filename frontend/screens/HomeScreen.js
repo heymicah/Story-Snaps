@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getAllStories, createNewStory } from "../api/StorageApi";
+import eventEmitter from '../eventEmitter';
+
 import {
   View,
   Text,
@@ -29,6 +31,26 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     loadStories();
+  
+    const storageUpdateListener = () => {
+      loadStories();
+    };
+  
+    const storyUpdateListener = (updatedStory) => {
+      setStories(prevStories => 
+        prevStories.map(story => 
+          story.id === updatedStory.id ? updatedStory : story
+        )
+      );
+    };
+  
+    eventEmitter.on('storageUpdated', storageUpdateListener);
+    eventEmitter.on('storyUpdated', storyUpdateListener);
+  
+    return () => {
+      eventEmitter.off('storageUpdated', storageUpdateListener);
+      eventEmitter.off('storyUpdated', storyUpdateListener);
+    };
   }, []);
 
   const loadStories = async () => {

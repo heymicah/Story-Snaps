@@ -1,5 +1,14 @@
 import * as FileSystem from "expo-file-system";
 
+const generateUniqueId = (stories) => {
+  const existingIds = new Set(stories.map((story) => parseInt(story.id)));
+  let newId = 1;
+  while (existingIds.has(newId)) {
+    newId++;
+  }
+  return newId.toString();
+};
+
 const saveImage = async (base64Image, filename) => {
   const dirUri = `${FileSystem.documentDirectory}SS_Images/`;
   const fileUri = `${dirUri}${filename}`;
@@ -134,13 +143,12 @@ export const createNewStory = async () => {
       const jsonString = await FileSystem.readAsStringAsync(jsonUri);
       stories = JSON.parse(jsonString);
     } catch (error) {
-      // If file doesn't exist or is invalid, we'll start with an empty array
       console.log("No existing stories found or invalid file. Starting fresh.");
     }
 
-    const newIndex = stories.length + 1; // Use length + 1 to start IDs at 1
+    const newId = generateUniqueId(stories);
     const newStory = {
-      id: newIndex.toString(), // Convert to string to match your existing format
+      id: newId,
       title: "New Story",
       isFinished: false,
       pages: [],
@@ -161,42 +169,6 @@ export const createNewStory = async () => {
   }
 };
 
-// export const getAllStories = () => {
-//   const stories = [
-//     {
-//       id: "1",
-//       title: "Story 1",
-//       isFinished: false,
-//       pages: [
-//         {
-//           text: "Story 1 Page 1 text",
-//           imagePath: "../assets/placeholder.jpg",
-//         },
-//         {
-//           text: "Story 2 Page 2 text",
-//           imagePath: "../assets/placeholder.jpg",
-//         },
-//       ],
-//     },
-//     {
-//       id: "2",
-//       title: "Story 2",
-//       isFinished: false,
-//       pages: [
-//         {
-//           text: "Story 2 Page 1 text",
-//           imagePath: "../assets/placeholder.jpg",
-//         },
-//         {
-//           text: "Story 2 Page 2 text",
-//           imagePath: "../assets/placeholder.jpg",
-//         },
-//       ],
-//     },
-//   ];
-//   return stories;
-// };
-
 export const getAllStories = async () => {
   try {
     const jsonUri = `${FileSystem.documentDirectory}stories.json`;
@@ -212,5 +184,66 @@ export const getAllStories = async () => {
   } catch (error) {
     console.error("Error getting all stories:", error);
     return [];
+  }
+};
+
+export const setStoryEnding = async (storyId) => {
+  try {
+    // Read the current stories
+    const jsonUri = `${FileSystem.documentDirectory}stories.json`;
+    const jsonString = await FileSystem.readAsStringAsync(jsonUri);
+    let stories = JSON.parse(jsonString);
+
+    // Find the story to update
+    const storyIndex = stories.findIndex((story) => story.id === storyId);
+    if (storyIndex === -1) {
+      throw new Error("Story not found");
+    }
+
+    // Update the isEnding field
+    stories[storyIndex].isFinished = true;
+
+    // Save the updated stories
+    await FileSystem.writeAsStringAsync(jsonUri, JSON.stringify(stories));
+
+    console.log("Story ending set successfully");
+    return stories[storyIndex];
+  } catch (error) {
+    console.error("Error setting story ending:", error);
+    throw error;
+  }
+};
+
+export const deleteStory = async (storyId) => {
+  try {
+    // Define the JSON file path
+    const jsonUri = `${FileSystem.documentDirectory}stories.json`;
+
+    // Read and parse the current stories
+    const jsonString = await FileSystem.readAsStringAsync(jsonUri);
+    let stories = JSON.parse(jsonString);
+
+    // Find the index of the story to delete
+    const storyIndex = stories.findIndex((story) => story.id === storyId);
+
+    if (storyIndex !== -1) {
+      // Remove the story from the list
+      stories.splice(storyIndex, 1);
+
+      // Save the updated stories back to the JSON file
+      await FileSystem.writeAsStringAsync(jsonUri, JSON.stringify(stories));
+
+      console.log("Story deleted successfully");
+      return { success: true, message: "Story deleted successfully" };
+    } else {
+      console.log("Story not found");
+      return { success: false, message: "Story not found" };
+    }
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return {
+      success: false,
+      message: `Error deleting story: ${error.message}`,
+    };
   }
 };

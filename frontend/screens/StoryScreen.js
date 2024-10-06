@@ -15,7 +15,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/dev";
 import PagerView from "react-native-pager-view";
-import { updateStoryTitle } from "../api/StorageApi";
+import { updateStoryTitle, deleteStory } from "../api/StorageApi";
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -24,8 +24,8 @@ const StoryScreen = ({ route, navigation }) => {
   });
   const { storyObj } = route.params;
   const isNewStory = !storyObj || storyObj.pages.length === 0;
-  const [title, setTitle] = useState(isNewStory ? "New Story" : storyObj.title);
-  const [isEditing, setIsEditing] = useState(isNewStory);
+  const [title, setTitle] = useState(storyObj.title);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleEditPress = () => {
     setIsEditing(true);
@@ -33,11 +33,16 @@ const StoryScreen = ({ route, navigation }) => {
 
   const handleTitleChange = (newTitle) => {
     setTitle(newTitle);
-    updateStoryTitle(storyObj.id, newTitle);
   };
 
   const handleTitleSubmit = () => {
+    updateStoryTitle(storyObj.id, title);
     setIsEditing(false);
+  };
+
+  const handleDeletePress = async () => {
+    await deleteStory(storyObj.id);
+    navigation.navigate("Home");
   };
 
   const renderStoryView = (page, index) => {
@@ -60,38 +65,51 @@ const StoryScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        {isEditing ? (
-          <TextInput
-            style={styles.titleInput}
-            value={title}
-            onChangeText={handleTitleChange}
-            onSubmitEditing={handleTitleSubmit}
-            autoFocus
-          />
-        ) : (
-          <Text style={styles.titleText}>{title}</Text>
-        )}
-        {isEditing ? (
-          ""
-        ) : (
-          <TouchableOpacity
-            onPress={handleEditPress}
-            style={styles.editIconContainer}
-          >
-            <Image
-              style={styles.editIcon}
-              source={require("../assets/edit-icon.png")}
+        <View style={styles.titleWrapper}>
+          {isEditing ? (
+            <TextInput
+              style={styles.titleInput}
+              value={title}
+              onChangeText={handleTitleChange}
+              onSubmitEditing={handleTitleSubmit}
+              autoFocus
             />
-          </TouchableOpacity>
+          ) : (
+            <Text style={styles.titleText}>{title}</Text>
+          )}
+        </View>
+        {!isEditing && (
+          <View style={styles.iconContainer}>
+            <TouchableOpacity
+              onPress={handleEditPress}
+              style={styles.iconButton}
+            >
+              <Image
+                style={styles.icon}
+                source={require("../assets/edit-icon.png")}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleDeletePress}
+              style={styles.iconButton}
+            >
+              <Image
+                style={styles.icon}
+                source={require("../assets/trash.png")}
+              />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
 
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => navigation.navigate("Camera", { storyObj: storyObj })}
-      >
-        <Text style={styles.addBtnText}>+</Text>
-      </TouchableOpacity>
+      {!storyObj.isFinished && (
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => navigation.navigate("Camera", { storyObj: storyObj })}
+        >
+          <Text style={styles.addBtnText}>+</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Back to Home Button */}
       <TouchableOpacity
@@ -125,17 +143,22 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     width: "100%",
     backgroundColor: "#3FA7D6",
     paddingHorizontal: 20,
+    paddingTop: 50, // Adjust this value based on your needs
+    paddingBottom: 10,
+  },
+  titleWrapper: {
+    flex: 1,
+    alignItems: "center",
   },
   titleText: {
     fontSize: 30,
     fontFamily: "Roboto_700Bold",
     color: "#080C0C",
     textAlign: "center",
-    marginTop: "12%",
   },
   titleInput: {
     fontSize: 30,
@@ -143,18 +166,20 @@ const styles = StyleSheet.create({
     color: "#080C0C",
     borderBottomWidth: 1,
     borderBottomColor: "#080C0C",
-    marginTop: 50,
     textAlign: "center",
     minWidth: 200,
   },
-  editIconContainer: {
-    marginLeft: 10,
-    padding: 5,
-    marginTop: "12%",
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  editIcon: {
-    width: 30,
-    height: 30,
+  iconButton: {
+    padding: 5,
+    marginLeft: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   addBtn: {
     position: "absolute",

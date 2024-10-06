@@ -17,7 +17,6 @@ import {
 } from "@expo-google-fonts/dev";
 
 const { width: screenWidth } = Dimensions.get("window");
-const stories = getAllStories();
 
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -46,8 +45,8 @@ const HomeScreen = ({ navigation }) => {
   const handleNewStory = async () => {
     try {
       const newStory = await createNewStory();
+      setStories((prevStories) => [...prevStories, newStory]);
       navigation.navigate("Story", { storyObj: newStory });
-      // Optionally, you can reload the stories list after creating a new story
       loadStories();
     } catch (error) {
       console.error("Error creating new story:", error);

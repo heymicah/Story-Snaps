@@ -9,7 +9,7 @@ import {
   Animated,
   Image,
   Dimensions,
-  Scrollview,
+  ScrollView, // Ensure ScrollView is imported
 } from "react-native";
 import {
   useFonts,

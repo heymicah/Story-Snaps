@@ -9,7 +9,6 @@ import {
   Animated,
   Image,
   Dimensions,
-  ScrollView,
 } from "react-native";
 import {
   useFonts,
@@ -53,23 +52,22 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header as a fixed element */}
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Story Snaps</Text>
       </View>
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true },
+          { useNativeDriver: false } // Use native driver set to false for compatibility
         )}
         scrollEventThrottle={16}
       >
         {/* Padding at the top to make space for the header */}
         <View style={{ paddingTop: 100 }} />
         {stories.map((story) => renderStoryPreview(story))}
-      </ScrollView>
+      </Animated.ScrollView>
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => navigation.navigate("Story", { storyObj: {} })}

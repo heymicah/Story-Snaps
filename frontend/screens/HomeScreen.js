@@ -20,6 +20,8 @@ import {
 
 const { width: screenWidth } = Dimensions.get("window");
 
+
+
 const HomeScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     Baloo2_400Regular,
@@ -105,62 +107,55 @@ const HomeScreen = ({ navigation }) => {
   if (loading) {
     return <Text>Loading stories...</Text>;
   }
+    const scrollViewMarginTop = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [100, 0], // Start with 100 and reduce to 0
+      extrapolate: "clamp",
+    });
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.headerContainer,
-          {
-            transform: [
-              {
-                translateY: scrollY.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: [0, -100],
-                  extrapolate: "clamp",
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <Text style={styles.headerText}>Story Snaps</Text>
-      </Animated.View>
-      <Animated.ScrollView // Change to Animated.ScrollView
-        style={styles.scrollView}
+      <Animated.ScrollView
+        style={[styles.scrollView]}
         contentContainerStyle={styles.scrollViewContent}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true },
+          { useNativeDriver: true }
         )}
         scrollEventThrottle={16}
+        decelerationRate="fast" // Add this line to smooth scrolling
       >
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Story Snaps</Text>
+          <Image
+              style={styles.logo}
+              source={require("../assets/logo.png")}
+          />
+        </View>
+        
+
         {stories.length > 0 ? (
           stories.map((story) => renderStoryPreview(story))
         ) : (
-          <Text>Create a Story to get started!</Text>
+          <View style={styles.emptyStateContainer}>
+            <Text style={styles.noStoriesText}>Create a Story to get started!</Text>
+          </View>
         )}
       </Animated.ScrollView>
+      
       <TouchableOpacity style={styles.addBtn} onPress={handleNewStory}>
         <Text style={styles.addBtnText}>New Story</Text>
       </TouchableOpacity>
     </View>
   );
+
+
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F0E6EF",
-  },
-  headerContainer: {
-    width: "100%",
-    backgroundColor: "#3FA7D6",
-    paddingTop: 40,
-    paddingBottom: 0,
-    alignItems: "center",
-    position: "absolute",
-    top: 0,
   },
   headerText: {
     fontSize: 40,
@@ -169,7 +164,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    marginTop: 100,
+    marginTop: 50,
   },
   scrollViewContent: {
     paddingTop: 20,
@@ -206,7 +201,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     left: 10,
-    backgroundColor: "#3FA7D6",
+    backgroundColor: "#EE819E",
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 20,
@@ -220,10 +215,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
-    backgroundColor: "#3FA7D6",
+    backgroundColor: "#FF7847",
     padding: 12,
     borderRadius: 20,
-    opacity: 0.8,
+    opacity: 1,
     shadowColor: "#080C0C",
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 0.8,
@@ -239,6 +234,29 @@ const styles = StyleSheet.create({
     fontFamily: "Baloo2_600SemiBold",
     color: "#080C0C",
   },
+  emptyStateContainer: {
+    justifyContent: "center",
+    // alignItems: "center",
+  },
+  noStoriesText: {
+    position: "absolute",
+    marginTop: 300,
+    paddingLeft: 90,
+  },
+  logo: {
+    width: 60, // Set to a fixed width
+    height: 60, // Set to a fixed height
+    resizeMode: "contain",
+    marginLeft: 10, // Optional: Add spacing between title and logo
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center", // Centers the items vertically
+    justifyContent: "space-between", // Adjust spacing between title and logo
+    paddingHorizontal: 10, // Add horizontal padding if needed
+    marginBottom: 20, // Space below header
+  },
+  
 });
 
 export default HomeScreen;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,69 @@ import {
 import PagerView from "react-native-pager-view";
 import { updateStoryTitle, deleteStory } from "../api/StorageApi";
 import eventEmitter from '../eventEmitter';
+
+const whimsicalLines = [
+  "Once upon a time in a land of dreams...",
+  "A curious little rabbit hopped through the meadow...",
+  "Stars danced in the sky like twinkling candies...",
+  "The wind whispered secrets of enchanted dreams...",
+  "Adventures awaited beyond every rainbow's end...",
+];
+
+const TypingText = () => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [cursorVisible, setCursorVisible] = useState(true);
+  const typingSpeed = 100; 
+  const deletingSpeed = 50; 
+  const pauseDuration = 5000; 
+
+  useEffect(() => {
+    const currentLine = whimsicalLines[currentLineIndex];
+
+    if (!isDeleting) {
+      if (displayedText.length < currentLine.length) {
+        const timer = setTimeout(() => {
+          setDisplayedText(currentLine.slice(0, displayedText.length + 1));
+        }, typingSpeed);
+        return () => clearTimeout(timer);
+      } else {
+        const pauseTimer = setTimeout(() => {
+          setIsDeleting(true);
+        }, pauseDuration);
+        return () => clearTimeout(pauseTimer);
+      }
+    } else {
+      if (displayedText.length > 0) {
+        const timer = setTimeout(() => {
+          setDisplayedText(currentLine.slice(0, displayedText.length - 1));
+        }, deletingSpeed);
+        return () => clearTimeout(timer);
+      } else {
+        setIsDeleting(false);
+        setCurrentLineIndex((prevIndex) => (prevIndex + 1) % whimsicalLines.length);
+      }
+    }
+  }, [displayedText, isDeleting, currentLineIndex]);
+
+  useEffect(() => {
+    const cursorTimer = setInterval(() => {
+      setCursorVisible((prev) => !prev);
+    }, 500);
+
+    return () => clearInterval(cursorTimer);
+  }, []);
+
+  return (
+    <View style={styles.typingTextContainer}>
+      <Text style={styles.pageText}>
+        {displayedText}
+        {cursorVisible ? "|" : ""}
+      </Text>
+    </View>
+  );
+};
 
 const StoryScreen = ({ route, navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -125,11 +188,17 @@ const StoryScreen = ({ route, navigation }) => {
         style={styles.backBtn}
         onPress={() => navigation.navigate("Home")}
       >
-        <Text style={styles.backBtnText}>Return Home</Text>
+        {/* <Text style={styles.backBtnText}>Return Home</Text> */}
+        <Image
+                style={styles.home}
+                source={require("../assets/home.png")}
+              />
       </TouchableOpacity>
 
       {isNewStory ? (
         <View style={styles.emptyStateContainer}>
+          <TypingText/>
+          <Text></Text>
           <Text style={styles.pageText}>
             Press the "+" button to add to your story!
           </Text>
@@ -154,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    backgroundColor: "#3FA7D6",
+    backgroundColor: "#99D6AC",
     paddingHorizontal: 20,
     paddingTop: 50, // Adjust this value based on your needs
     paddingBottom: 10,
@@ -190,11 +259,15 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  home: {
+    width: 42,
+    height: 42,
+  },
   addBtn: {
     position: "absolute",
     bottom: 30,
     right: 30,
-    backgroundColor: "#3FA7D6",
+    backgroundColor: "#FF7847",
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -223,10 +296,10 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     position: "absolute",
-    bottom: 35, // Adjust this value if needed
-    left: 30,
+    bottom: 30, // Adjust this value if needed
+    left: 26,
     backgroundColor: "#3FA7D6",
-    borderRadius: 10,
+    borderRadius: 30,
     padding: 10,
     zIndex: 1,
     opacity: 0.8,
@@ -242,12 +315,12 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  backBtnText: {
-    fontSize: 16,
-    color: "#080C0C",
-    fontFamily: "Baloo2_700Bold",
-    textAlign: "center",
-  },
+  // backBtnText: {
+  //   fontSize: 16,
+  //   color: "#080C0C",
+  //   fontFamily: "Baloo2_700Bold",
+  //   textAlign: "center",
+  // },
   pagerView: {
     flex: 1,
   },
@@ -278,8 +351,9 @@ const styles = StyleSheet.create({
   },
   emptyStateContainer: {
     alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
+    justifyContent: "flex-start",
+    flex: 0.5,
+    paddingTop: 200,
   },
 });
 

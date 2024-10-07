@@ -32,9 +32,9 @@ const TypingText = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [cursorVisible, setCursorVisible] = useState(true);
-  const typingSpeed = 100; 
-  const deletingSpeed = 50; 
-  const pauseDuration = 5000; 
+  const typingSpeed = 100;
+  const deletingSpeed = 50;
+  const pauseDuration = 5000;
 
   useEffect(() => {
     const currentLine = whimsicalLines[currentLineIndex];
@@ -59,7 +59,9 @@ const TypingText = () => {
         return () => clearTimeout(timer);
       } else {
         setIsDeleting(false);
-        setCurrentLineIndex((prevIndex) => (prevIndex + 1) % whimsicalLines.length);
+        setCurrentLineIndex(
+          (prevIndex) => (prevIndex + 1) % whimsicalLines.length
+        );
       }
     }
   }, [displayedText, isDeleting, currentLineIndex]);
@@ -188,15 +190,12 @@ const StoryScreen = ({ route, navigation }) => {
         onPress={() => navigation.navigate("Home")}
       >
         {/* <Text style={styles.backBtnText}>Return Home</Text> */}
-        <Image
-                style={styles.home}
-                source={require("../assets/home.png")}
-              />
+        <Image style={styles.home} source={require("../assets/home.png")} />
       </TouchableOpacity>
 
       {isNewStory ? (
         <View style={styles.emptyStateContainer}>
-          <TypingText/>
+          <TypingText />
           <Text></Text>
           <Text style={styles.pageText}>
             Press the "+" button to add to your story!
@@ -314,12 +313,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  // backBtnText: {
-  //   fontSize: 16,
-  //   color: "#080C0C",
-  //   fontFamily: "Baloo2_700Bold",
-  //   textAlign: "center",
-  // },
   pagerView: {
     flex: 1,
   },
@@ -353,6 +346,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flex: 0.5,
     paddingTop: 200,
+  },
+  typingTextContainer: {
+    height: 100,
   },
 });
 
